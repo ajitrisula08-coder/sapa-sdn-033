@@ -42,23 +42,42 @@ function formatTanggal(iso: string) {
   return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 }
 
+const PERSIAPAN: Record<string, string[]> = {
+  IMAM: ['Hadir ± 15 menit sebelum waktu sholat', 'Menjaga kelancaran bacaan dan mengingatkan jamaah untuk merapikan saf'],
+  KHATIB: ['Menyiapkan naskah khutbah yang memenuhi rukun khutbah', 'Menyampaikan khutbah dengan ringkas, jelas, dan menyejukkan', 'Hadir ± 15 menit sebelum waktu sholat'],
+  BILAL: ['Memeriksa pengeras suara sebelum azan', 'Menyiapkan azan, iqamah, dan pengumuman sebelum khutbah', 'Hadir ± 20 menit sebelum waktu sholat'],
+};
+
 function pesan(nama: string, tugas: string, tanggal: string, jam: string, tema: string | null, masjid: string) {
   return [
+    '🕌 *PENGINGAT TUGAS SHOLAT JUMAT*',
+    `*${masjid}*`,
+    '━━━━━━━━━━━━━━━━━━',
+    '',
     "Assalamu'alaikum warahmatullahi wabarakatuh.",
     '',
-    `Yth. Bapak *${nama}*,`,
-    `kami mengingatkan bahwa Bapak dijadwalkan bertugas sebagai *${tugas}* sholat Jumat di ${masjid}:`,
+    `Yth. *Bapak ${nama}* 🤲`,
+    'Dengan hormat, kami mengingatkan amanah Bapak sebagai:',
     '',
-    `📅 ${formatTanggal(tanggal)}`,
-    `🕛 Pukul ${jam.slice(0, 5)} WITA`,
-    ...(tugas === 'KHATIB' && tema ? [`📖 Tema khutbah: ${tema}`] : []),
+    `🎖️ *${tugas} SHOLAT JUMAT*`,
     '',
-    'Mohon persiapannya. Apabila berhalangan, mohon segera mengabari pengurus agar dapat dicarikan pengganti.',
+    `📅 *${formatTanggal(tanggal)}*`,
+    `🕛 Pukul *${jam.slice(0, 5)} WITA*`,
+    `📍 ${masjid}`,
+    ...(tugas === 'KHATIB' && tema ? [`📖 Tema khutbah: _${tema}_`] : []),
     '',
-    'Jazakumullahu khairan.',
-    `— Pengurus ${masjid}`,
+    '✅ *Mohon persiapan:*',
+    ...(PERSIAPAN[tugas] ?? []).map((p) => `• ${p}`),
     '',
-    '(Pesan otomatis dari aplikasi masjid)',
+    '> _"Sebaik-baik hari yang matahari terbit padanya adalah hari Jumat."_',
+    '> (HR. Muslim no. 854)',
+    '',
+    'Apabila berhalangan, mohon mengabari pengurus *paling lambat Jumat pagi* agar dapat dicarikan pengganti.',
+    '',
+    'Jazakumullahu khairan katsiran 🙏',
+    `_Pengurus ${masjid}_`,
+    '',
+    '_(Pesan otomatis dari aplikasi masjid)_',
   ].join('\n');
 }
 

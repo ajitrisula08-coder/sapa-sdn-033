@@ -1,4 +1,4 @@
-import { Bot, CheckCircle2, Copy, Loader2, MessageCircle, Phone, Send, Users } from 'lucide-react';
+import { Bot, CheckCircle2, Copy, Eye, Loader2, MessageCircle, Pencil, Phone, Send, Users } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
@@ -13,6 +13,7 @@ import {
 import type { FridaySchedule } from '../lib/types';
 import { Badge, EmptyState, ErrorState, LoadingBlock, useConfirm } from './ui';
 import { callFn } from './WaAutoSettings';
+import { WaPreview } from './WaPreview';
 
 async function copyText(text: string, toast: { success: (m: string) => void; error: (m: string) => void }) {
   try { await navigator.clipboard.writeText(text); toast.success('Pesan disalin. Tempel di WhatsApp.'); }
@@ -30,6 +31,7 @@ function RoleCard({ schedule, role, label, phone, sentAt, mosqueName, onSent, on
   const [text, setText] = useState(initial);
   const [newPhone, setNewPhone] = useState('');
   const [savingPhone, setSavingPhone] = useState(false);
+  const [editing, setEditing] = useState(false);
   useEffect(() => { setText(initial); }, [initial]);
 
   if (!officer || !officerId) {
@@ -75,10 +77,18 @@ function RoleCard({ schedule, role, label, phone, sentAt, mosqueName, onSent, on
           </div>
         </div>
       )}
-      <label className="mt-3 block flex-1">
-        <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-400">Pesan (bisa diubah)</span>
-        <textarea className="input min-h-56 text-sm leading-relaxed" value={text} onChange={(e) => setText(e.target.value)} />
-      </label>
+      <div className="mt-3 flex-1">
+        <div className="mb-1.5 flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{editing ? 'Ubah pesan' : 'Pratinjau di WhatsApp'}</span>
+          <button className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-emerald-700 hover:bg-emerald-50" onClick={() => setEditing(!editing)}>
+            {editing ? <><Eye className="size-3.5" /> Lihat pratinjau</> : <><Pencil className="size-3.5" /> Ubah pesan</>}
+          </button>
+        </div>
+        {editing
+          ? <textarea className="input min-h-80 font-mono text-[13px] leading-relaxed" value={text} onChange={(e) => setText(e.target.value)} />
+          : <div className="max-h-[28rem] overflow-y-auto rounded-2xl"><WaPreview text={text} /></div>}
+        {editing && <p className="mt-1 text-[11px] text-slate-500">Format WhatsApp: *tebal*, _miring_, ~coret~, awali baris dengan "&gt; " untuk kutipan.</p>}
+      </div>
       <div className="mt-3 flex flex-wrap gap-2">
         <button className="btn flex-1 bg-[#25D366] text-white hover:bg-[#1ebe5a]" onClick={send}>
           <Send className="size-4" /> {phone ? 'Kirim WA' : 'Buka WA (pilih kontak)'}
@@ -167,7 +177,7 @@ export function FridayReminderPanel() {
 
       <div className="card p-5">
         <p className="flex items-center gap-2 font-semibold text-slate-800"><Users className="size-5 text-emerald-700" /> Ringkasan untuk grup WhatsApp</p>
-        <pre className="mt-3 whitespace-pre-wrap rounded-xl bg-slate-50 p-4 font-sans text-sm text-slate-700">{group}</pre>
+        <div className="mt-3 max-w-xl"><WaPreview text={group} /></div>
         <div className="mt-3 flex flex-wrap gap-2">
           <a className="btn bg-[#25D366] text-white hover:bg-[#1ebe5a]" href={waLink(group)} target="_blank" rel="noreferrer"><Send className="size-4" /> Kirim ke grup (pilih grup)</a>
           <button className="btn-outline" onClick={() => void copyText(group, toast)}><Copy className="size-4" /> Salin</button>

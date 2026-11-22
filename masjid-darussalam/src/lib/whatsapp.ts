@@ -21,44 +21,81 @@ export function prettyWhatsapp(n: string): string {
   return local.replace(/^(\d{4})(\d{4})(\d+)$/, '$1-$2-$3');
 }
 
-/** Pesan pengingat untuk satu petugas. */
+/** Persiapan khusus untuk setiap tugas. */
+const PERSIAPAN: Record<ReminderRole, string[]> = {
+  imam: [
+    'Hadir ± 15 menit sebelum waktu sholat',
+    'Menjaga kelancaran bacaan dan mengingatkan jamaah untuk merapikan saf',
+  ],
+  khatib: [
+    'Menyiapkan naskah khutbah yang memenuhi rukun khutbah',
+    'Menyampaikan khutbah dengan ringkas, jelas, dan menyejukkan',
+    'Hadir ± 15 menit sebelum waktu sholat',
+  ],
+  bilal: [
+    'Memeriksa pengeras suara sebelum azan',
+    'Menyiapkan azan, iqamah, dan pengumuman sebelum khutbah',
+    'Hadir ± 20 menit sebelum waktu sholat',
+  ],
+};
+
+const GARIS = '━━━━━━━━━━━━━━━━━━';
+
+/** Pesan pengingat untuk satu petugas (format teks WhatsApp). */
 export function reminderMessage(s: FridaySchedule, role: ReminderRole, name: string, mosqueName: string): string {
   const label = REMINDER_ROLES.find((r) => r.key === role)!.label.toUpperCase();
-  const lines = [
+  return [
+    '🕌 *PENGINGAT TUGAS SHOLAT JUMAT*',
+    `*${mosqueName}*`,
+    GARIS,
+    '',
     'Assalamu\'alaikum warahmatullahi wabarakatuh.',
     '',
-    `Yth. Bapak *${name}*,`,
-    `kami mengingatkan bahwa Bapak dijadwalkan bertugas sebagai *${label}* sholat Jumat di ${mosqueName}:`,
+    `Yth. *Bapak ${name}* 🤲`,
+    'Dengan hormat, kami mengingatkan amanah Bapak sebagai:',
     '',
-    `📅 ${formatDateLong(s.friday_date)}`,
-    `🕛 Pukul ${hhmm(s.start_time)} WITA`,
-  ];
-  if (role === 'khatib' && s.sermon_theme) lines.push(`📖 Tema khutbah: ${s.sermon_theme}`);
-  lines.push(
+    `🎖️ *${label} SHOLAT JUMAT*`,
     '',
-    'Mohon persiapannya. Apabila berhalangan, mohon segera mengabari pengurus agar dapat dicarikan pengganti.',
+    `📅 *${formatDateLong(s.friday_date)}*`,
+    `🕛 Pukul *${hhmm(s.start_time)} WITA*`,
+    `📍 ${mosqueName}`,
+    ...(role === 'khatib' && s.sermon_theme ? [`📖 Tema khutbah: _${s.sermon_theme}_`] : []),
     '',
-    'Jazakumullahu khairan.',
-    `— Pengurus ${mosqueName}`,
-  );
-  return lines.join('\n');
+    '✅ *Mohon persiapan:*',
+    ...PERSIAPAN[role].map((p) => `• ${p}`),
+    '',
+    '> _"Sebaik-baik hari yang matahari terbit padanya adalah hari Jumat."_',
+    '> (HR. Muslim no. 854)',
+    '',
+    'Apabila berhalangan, mohon mengabari pengurus *paling lambat Jumat pagi* agar dapat dicarikan pengganti.',
+    '',
+    'Jazakumullahu khairan katsiran 🙏',
+    `_Pengurus ${mosqueName}_`,
+  ].join('\n');
 }
 
 /** Pesan ringkasan untuk grup WhatsApp pengurus/petugas. */
 export function groupMessage(s: FridaySchedule, mosqueName: string): string {
-  const n = (o?: { full_name: string } | null) => o?.full_name ?? '(belum ditentukan)';
+  const n = (o?: { full_name: string } | null) => (o?.full_name ? `*${o.full_name}*` : '_(belum ditentukan)_');
   return [
+    '🕌 *PETUGAS SHOLAT JUMAT*',
+    `*${mosqueName}*`,
+    GARIS,
+    '',
     'Assalamu\'alaikum warahmatullahi wabarakatuh.',
     '',
-    `*Petugas Sholat Jumat ${mosqueName}*`,
-    `📅 ${formatDateLong(s.friday_date)} · 🕛 ${hhmm(s.start_time)} WITA`,
+    `📅 *${formatDateLong(s.friday_date)}*`,
+    `🕛 Pukul *${hhmm(s.start_time)} WITA*`,
     '',
-    `• Imam   : ${n(s.imam)}`,
-    `• Khatib : ${n(s.khatib)}`,
-    `• Bilal  : ${n(s.bilal)}`,
-    ...(s.sermon_theme ? ['', `📖 Tema khutbah: ${s.sermon_theme}`] : []),
+    `🎖️ Imam    : ${n(s.imam)}`,
+    `🎤 Khatib  : ${n(s.khatib)}`,
+    `🔔 Bilal   : ${n(s.bilal)}`,
+    ...(s.sermon_theme ? ['', `📖 Tema khutbah: _${s.sermon_theme}_`] : []),
     '',
-    'Mohon persiapannya. Jazakumullahu khairan.',
+    'Mohon kepada para petugas untuk mempersiapkan diri dan hadir lebih awal. Apabila berhalangan, mohon segera mengabari pengurus.',
+    '',
+    'Jazakumullahu khairan katsiran 🙏',
+    `_Pengurus ${mosqueName}_`,
   ].join('\n');
 }
 
