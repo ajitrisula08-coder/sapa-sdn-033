@@ -1,4 +1,4 @@
-import { ArrowLeft, BellRing, BookOpen, Landmark, Maximize, Megaphone, Mic, Minimize, Moon, Star, Users, Volume2 } from 'lucide-react';
+import { ArrowLeft, BellRing, BookOpen, Landmark, Maximize, Megaphone, Mic, Minimize, Moon, Star, Users } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { AnimatedName } from '../components/AnimatedName';
@@ -75,7 +75,7 @@ export default function TvPage() {
   const imsak = new Date(status.today.times.subuh.getTime() - 10 * 60_000);
   const runningText = settings.tv_running_text?.trim() || anns.map((a) => `${a.title}: ${a.content.replace(/\s+/g, ' ').slice(0, 140)}`).join('   ✦   ') || `Selamat datang di ${settings.name}. Mari makmurkan masjid dengan sholat berjamaah.`;
   const f = friday.data;
-  const fridayRows: [string, string | undefined][] = f ? [['Imam', f.imam?.full_name], ['Khatib', f.khatib?.full_name], ['Bilal', f.bilal?.full_name], ['Muazin', f.muazin?.full_name]] : [];
+  const fridayRows: [string, string | undefined][] = f ? [['Imam', f.imam?.full_name], ['Khatib', f.khatib?.full_name], ['Bilal', f.bilal?.full_name]] : [];
 
   // Slide petugas Jumat layar penuh: Kamis & Jumat (s.d. 90 menit setelah Jumat dimulai),
   // tampil 15 detik di akhir setiap menit. ?slide=jumat untuk memaksa tampil (uji coba).
@@ -85,7 +85,7 @@ export default function TvPage() {
     || (settings.tv_friday_slide && fridayWindow && now.getSeconds() >= 45));
   const SLIDE_ROLES = [
     { key: 'imam', label: 'Imam', icon: Star }, { key: 'khatib', label: 'Khatib', icon: Mic },
-    { key: 'bilal', label: 'Bilal', icon: BellRing }, { key: 'muazin', label: 'Muazin', icon: Volume2 },
+    { key: 'bilal', label: 'Bilal', icon: BellRing }, // muazin dirangkap bilal
   ] as const;
 
   const style = { '--u': 'min(1vw, 1.7778vh)' } as CSSProperties;
@@ -151,11 +151,11 @@ export default function TvPage() {
             <div className="rounded-[1.4vw] bg-white/[0.06] ring-1 ring-white/12" style={{ padding: u(1.4) }}>
               <p className="flex items-center font-semibold text-gold-300" style={{ fontSize: u(1.25), gap: u(0.6) }}><Users style={{ width: u(1.5), height: u(1.5) }} /> Petugas Jumat {f ? `· ${formatDateLong(f.friday_date).split(',')[1]?.trim()} · ${hhmm(f.start_time)}` : ''}</p>
               {f ? (
-                <div className="grid grid-cols-4" style={{ gap: u(0.8), marginTop: u(0.6) }}>
+                <div className="grid grid-cols-3" style={{ gap: u(0.8), marginTop: u(0.6) }}>
                   {fridayRows.map(([r, n]) => (
                     <div key={r} className="min-w-0">
                       <p className="text-emerald-50/60" style={{ fontSize: u(0.95) }}>{r}</p>
-                      <p className="line-clamp-2 font-semibold leading-tight" style={{ fontSize: u(1.25) }}>{n ?? '—'}</p>
+                      <p className="line-clamp-2 font-semibold leading-tight" style={{ fontSize: u(1.45) }}>{n ?? '—'}</p>
                     </div>
                   ))}
                 </div>
@@ -225,7 +225,7 @@ export default function TvPage() {
                 const name = (f[r.key] as { full_name: string } | null | undefined)?.full_name;
                 const Icon = r.icon;
                 return (
-                  <div key={r.key} className="flex animate-rise-in flex-col justify-center overflow-hidden rounded-[1.6vw] bg-white/[0.07] ring-1 ring-white/15"
+                  <div key={r.key} className={`flex animate-rise-in flex-col justify-center overflow-hidden rounded-[1.6vw] bg-white/[0.07] ring-1 ring-white/15 ${i === 2 ? 'col-span-2 items-center text-center' : ''}`}
                     style={{ padding: `${u(1.4)} ${u(2.2)}`, animationDelay: `${250 + i * 160}ms` }}>
                     <span className="role-badge inline-flex w-fit items-center rounded-full bg-gradient-to-b from-gold-300 to-gold-500 font-extrabold uppercase text-slate-900" style={{ gap: u(0.7), padding: `${u(0.5)} ${u(1.5)}`, fontSize: u(2.1), letterSpacing: '0.1em', animationDelay: `${i * 0.4}s` }}>
                       <Icon className="animate-icon-swing" style={{ width: u(2.2), height: u(2.2), animationDelay: `${i * 0.3}s` }} /> {r.label}

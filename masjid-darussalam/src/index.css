@@ -132,7 +132,7 @@
   -webkit-background-clip: text; background-clip: text; color: transparent;
   will-change: transform;
 }
-/* Label tugas (Imam/Khatib/Bilal/Muazin) dengan denyut cahaya */
+/* Label tugas (Imam/Khatib/Bilal) dengan denyut cahaya */
 @utility role-badge {
   animation: badge-glow 2.6s ease-in-out infinite;
 }

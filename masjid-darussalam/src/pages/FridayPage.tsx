@@ -16,7 +16,8 @@ import { addDaysISO, formatDate, formatDateLong, hhmm, parseISODate, todayISO } 
 import { isSupabaseConfigured } from '../lib/supabase';
 import type { FridayOfficer, FridaySchedule, OfficerRole } from '../lib/types';
 
-const ROLES: OfficerRole[] = ['imam', 'khatib', 'bilal', 'muazin'];
+// Di Masjid Darussalam, tugas muazin dirangkap oleh bilal.
+const ROLES: OfficerRole[] = ['imam', 'khatib', 'bilal'];
 
 function nextFridayISO(from: string) {
   const dow = parseISODate(from).getUTCDay();
@@ -84,10 +85,10 @@ function OfficerModal({ initial, onClose }: { initial: Partial<FridayOfficer>; o
   const [saving, setSaving] = useState(false);
   async function save() {
     if (!f.full_name || f.full_name.trim().length < 2) { toast.error('Nama petugas wajib diisi.'); return; }
-    if (!f.roles?.length) { toast.error('Pilih minimal satu peran.'); return; }
+    if (!f.roles?.filter((r) => r !== 'muazin').length) { toast.error('Pilih minimal satu peran.'); return; }
     setSaving(true);
     try {
-      await saveOfficer({ id: f.id, full_name: f.full_name.trim(), roles: f.roles, notes: f.notes?.trim() || null, is_active: f.is_active ?? true });
+      await saveOfficer({ id: f.id, full_name: f.full_name.trim(), roles: f.roles.filter((r) => r !== 'muazin'), notes: f.notes?.trim() || null, is_active: f.is_active ?? true });
       toast.success('Data petugas disimpan.');
       emitDataChanged('friday');
       onClose();
@@ -122,7 +123,7 @@ function OfficerModal({ initial, onClose }: { initial: Partial<FridayOfficer>; o
 }
 
 function ScheduleCard({ s, onEdit, onDelete, highlight }: { s: FridaySchedule; onEdit?: () => void; onDelete?: () => void; highlight?: boolean }) {
-  const rows: [string, string | undefined][] = [['Imam', s.imam?.full_name], ['Khatib', s.khatib?.full_name], ['Bilal', s.bilal?.full_name], ['Muazin', s.muazin?.full_name]];
+  const rows: [string, string | undefined][] = [['Imam', s.imam?.full_name], ['Khatib', s.khatib?.full_name], ['Bilal', s.bilal?.full_name]];
   return (
     <div className={`relative overflow-hidden rounded-2xl p-5 transition duration-300 hover:-translate-y-1 hover:shadow-lift ${highlight ? 'bg-islamic text-white shadow-lift sm:p-7' : 'card'}`}>
       {highlight && <div className="pattern-overlay pointer-events-none absolute inset-0 opacity-10" />}
@@ -140,7 +141,7 @@ function ScheduleCard({ s, onEdit, onDelete, highlight }: { s: FridaySchedule; o
           </div>
         )}
       </div>
-      <dl className="relative mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+      <dl className="relative mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
         {rows.map(([role, name], i) => (
           <div key={role} style={{ animationDelay: `${150 + i * 120}ms` }} className={`animate-rise-in rounded-xl p-3 ${highlight ? 'bg-white/8 ring-1 ring-white/10 sm:p-4' : 'bg-slate-50'}`}>
             <dt className={`text-[11px] font-semibold uppercase tracking-wider ${highlight ? 'text-gold-300' : 'text-slate-400'}`}>{role}</dt>
@@ -232,7 +233,7 @@ export default function FridayPage() {
             <div className="card overflow-x-auto">
               <table className="w-full min-w-[640px] text-sm">
                 <thead className="border-b border-slate-100 text-left text-xs uppercase tracking-wider text-slate-500">
-                  <tr><th className="px-4 py-3">Tanggal</th><th className="px-4 py-3">Imam</th><th className="px-4 py-3">Khatib</th><th className="px-4 py-3">Bilal</th><th className="px-4 py-3">Muazin</th><th className="px-4 py-3">Tema</th>{isAdmin && <th />}</tr>
+                  <tr><th className="px-4 py-3">Tanggal</th><th className="px-4 py-3">Imam</th><th className="px-4 py-3">Khatib</th><th className="px-4 py-3">Bilal</th><th className="px-4 py-3">Tema</th>{isAdmin && <th />}</tr>
                 </thead>
                 <tbody>
                   {history.data.map((s) => (
@@ -241,7 +242,6 @@ export default function FridayPage() {
                       <td className="px-4 py-3">{s.imam?.full_name ?? '—'}</td>
                       <td className="px-4 py-3">{s.khatib?.full_name ?? '—'}</td>
                       <td className="px-4 py-3">{s.bilal?.full_name ?? '—'}</td>
-                      <td className="px-4 py-3">{s.muazin?.full_name ?? '—'}</td>
                       <td className="px-4 py-3 text-slate-500">{s.sermon_theme ?? '—'}</td>
                       {isAdmin && <td className="px-2"><button className="btn-ghost px-2 py-1.5" onClick={() => setEditSched(s)} title="Edit"><Pencil className="size-4" /></button></td>}
                     </tr>
@@ -262,7 +262,7 @@ export default function FridayPage() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-semibold text-slate-800">{o.full_name}</p>
-                      <div className="mt-1 flex flex-wrap gap-1">{o.roles.map((r) => <Badge key={r}>{ROLE_LABEL[r]}</Badge>)}{!o.is_active && <Badge tone="slate">Nonaktif</Badge>}</div>
+                      <div className="mt-1 flex flex-wrap gap-1">{o.roles.filter((r) => r !== 'muazin').map((r) => <Badge key={r}>{ROLE_LABEL[r]}</Badge>)}{!o.is_active && <Badge tone="slate">Nonaktif</Badge>}</div>
                     </div>
                     {isAdmin && (
                       <div className="flex">
@@ -271,8 +271,8 @@ export default function FridayPage() {
                       </div>
                     )}
                   </div>
-                  <div className="mt-3 grid grid-cols-4 gap-1 text-center text-xs">
-                    {([['Imam', o.as_imam], ['Khatib', o.as_khatib], ['Bilal', o.as_bilal], ['Muazin', o.as_muazin]] as const).map(([l, n]) => (
+                  <div className="mt-3 grid grid-cols-3 gap-1 text-center text-xs">
+                    {([['Imam', o.as_imam], ['Khatib', o.as_khatib], ['Bilal', o.as_bilal]] as const).map(([l, n]) => (
                       <div key={l} className="rounded-lg bg-slate-50 py-1.5"><p className="font-display text-lg font-bold text-emerald-800">{n}</p><p className="text-slate-500">{l}</p></div>
                     ))}
                   </div>

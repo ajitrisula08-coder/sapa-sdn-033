@@ -112,7 +112,7 @@ function FridayCard() {
   const q = useQuery(() => getNextFriday(today), [today], { topics: ['friday'] });
   const f = q.data;
   const rows: [string, string | undefined][] = f ? [
-    ['Imam', f.imam?.full_name], ['Khatib', f.khatib?.full_name], ['Bilal', f.bilal?.full_name], ['Muazin', f.muazin?.full_name],
+    ['Imam', f.imam?.full_name], ['Khatib', f.khatib?.full_name], ['Bilal', f.bilal?.full_name],
   ] : [];
   return (
     <div className="card relative h-full overflow-hidden p-5">
@@ -128,7 +128,7 @@ function FridayCard() {
               <p className="text-xs text-slate-500">Pukul {hhmm(f.start_time)} WITA</p>
               {f.sermon_theme && <p className="mt-2 flex items-start gap-1.5 text-sm text-slate-700"><BookOpen className="mt-0.5 size-4 shrink-0 text-gold-600" /> <span>Tema: <i>{f.sermon_theme}</i></span></p>}
             </div>
-            <dl className="grid grid-cols-2 gap-3">
+            <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {rows.map(([role, name]) => (
                 <div key={role} className="rounded-xl border border-slate-100 p-3">
                   <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">{role}</dt>

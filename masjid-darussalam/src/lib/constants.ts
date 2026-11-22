@@ -94,7 +94,7 @@ export const ROLE_LABEL: Record<OfficerRole, string> = {
   imam: 'Imam',
   khatib: 'Khatib',
   bilal: 'Bilal',
-  muazin: 'Muazin',
+  muazin: 'Muazin', // tidak dipakai lagi: di Masjid Darussalam tugas muazin dirangkap bilal
 };
 
 export const ANNOUNCEMENT_CATEGORY: Record<AnnouncementCategory, string> = {

@@ -1,4 +1,4 @@
-import { BellRing, BookOpen, Maximize, Mic, Minimize, Pencil, Star, Users, Volume2, X } from 'lucide-react';
+import { BellRing, BookOpen, Maximize, Mic, Minimize, Pencil, Star, Users, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatedName } from '../components/AnimatedName';
@@ -17,8 +17,8 @@ import type { FridaySchedule } from '../lib/types';
 const ROLES = [
   { key: 'imam', label: 'Imam', arab: 'الإمام', icon: Star },
   { key: 'khatib', label: 'Khatib', arab: 'الخطيب', icon: Mic },
+  // Di Masjid Darussalam, tugas muazin dirangkap oleh bilal.
   { key: 'bilal', label: 'Bilal', arab: 'البلال', icon: BellRing },
-  { key: 'muazin', label: 'Muazin', arab: 'المؤذن', icon: Volume2 },
 ] as const;
 
 /** Ornamen bintang segi delapan (berputar perlahan). */
@@ -82,7 +82,7 @@ function Showcase({ s, big, tz, hijriOffset }: { s: FridaySchedule; big: boolean
           const Icon = r.icon;
           return (
             <div key={r.key} style={{ animationDelay: `${450 + i * 180}ms` }}
-              className="group relative animate-rise-in overflow-hidden rounded-3xl bg-white/[0.07] p-5 ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-white/[0.11] sm:p-7">
+              className={`group relative animate-rise-in overflow-hidden rounded-3xl bg-white/[0.07] p-5 ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-white/[0.11] sm:p-7 ${i === 2 ? (big ? 'col-span-2' : 'sm:col-span-2') : ''}`}>
               <StarOrnament className="pointer-events-none absolute -right-10 -top-10 size-40 animate-spin-slow text-gold-400/15" />
               <div className="relative flex items-center justify-between gap-3">
                 <span className={`role-badge inline-flex items-center rounded-full bg-gradient-to-b from-gold-300 to-gold-500 font-extrabold uppercase tracking-wider text-slate-900 ${big ? 'gap-3 px-6 py-3 text-3xl' : 'gap-2.5 px-5 py-2.5 text-xl sm:text-2xl'}`}
