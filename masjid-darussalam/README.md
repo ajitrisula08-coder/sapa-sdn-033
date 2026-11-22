@@ -57,7 +57,8 @@ Buka **Project Settings → API** (atau **Data API / API Keys**). Anda butuh dua
 2. **Add New → Project** → pilih repository ini.
 3. Pada **Root Directory**, klik *Edit* dan pilih folder **`masjid-darussalam`**.
 4. Framework terdeteksi otomatis sebagai **Vite**.
-5. Buka **Environment Variables**, tambahkan:
+5. *(Opsional)* File `.env.production` sudah berisi URL & kunci publik project Supabase masjid,
+   jadi langkah ini boleh dilewati. Jika memakai project Supabase lain, buka **Environment Variables** dan tambahkan:
    - `VITE_SUPABASE_URL` = Project URL dari Langkah 5
    - `VITE_SUPABASE_ANON_KEY` = anon public key dari Langkah 5
 6. Klik **Deploy**. Setelah selesai, Anda mendapat alamat seperti `https://masjid-darussalam.vercel.app`.
