@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-arabic: "Amiri", "Traditional Arabic", serif;
+
+  --color-emerald-950: #022c22;
+  --color-forest: #053b2c;
+  --color-cream-50: #fffdf7;
+  --color-cream-100: #fbf6ea;
+  --color-cream-200: #f3ead3;
+  --color-gold-300: #f0d48a;
+  --color-gold-400: #e2bd5c;
+  --color-gold-500: #c9a227;
+  --color-gold-600: #a8841a;
+  --color-gold-700: #7d6213;
+
+  --shadow-soft: 0 1px 2px rgb(6 78 59 / 0.04), 0 8px 24px -8px rgb(6 78 59 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(6 78 59 / 0.06), 0 18px 40px -12px rgb(6 78 59 / 0.22);
+
+  --animate-fade-up: fade-up 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-marquee: marquee 40s linear infinite;
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+}
+
+@layer base {
+  html { -webkit-tap-highlight-color: transparent; }
+  body {
+    @apply bg-cream-50 text-slate-800 antialiased;
+    font-feature-settings: "tnum" 0;
+  }
+  input, select, textarea, button { font: inherit; }
+  .font-display { font-variant-numeric: lining-nums; }
+  :focus-visible { outline: 2px solid var(--color-gold-500); outline-offset: 2px; }
+}
+
+@utility card {
+  @apply rounded-2xl bg-white shadow-soft ring-1 ring-emerald-900/5;
+}
+@utility label { @apply mb-1.5 block text-sm font-semibold text-slate-700; }
+@utility input {
+  @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-[15px] text-slate-800 shadow-sm transition
+    placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 focus:outline-none
+    disabled:bg-slate-50 disabled:text-slate-500;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+    active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55 cursor-pointer;
+}
+@utility btn-primary { @apply btn bg-emerald-700 text-white shadow-sm hover:bg-emerald-800; }
+@utility btn-gold { @apply btn bg-gradient-to-b from-gold-400 to-gold-500 text-emerald-950 shadow-sm hover:from-gold-300 hover:to-gold-400; }
+@utility btn-outline { @apply btn border border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800; }
+@utility btn-ghost { @apply btn text-slate-600 hover:bg-emerald-50 hover:text-emerald-800; }
+@utility btn-danger { @apply btn bg-rose-600 text-white hover:bg-rose-700; }
+@utility tabular { font-variant-numeric: tabular-nums lining-nums; }
+
+@utility bg-islamic {
+  background-color: var(--color-forest);
+  background-image:
+    radial-gradient(1200px 500px at 85% -10%, rgb(16 185 129 / 0.35), transparent 60%),
+    radial-gradient(800px 400px at -10% 110%, rgb(201 162 39 / 0.18), transparent 60%),
+    linear-gradient(160deg, #065f46 0%, #053b2c 55%, #022c22 100%);
+}
+@utility pattern-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23e2bd5c' stroke-width='1'%3E%3Cpath d='M40 8l9.4 22.6L72 40l-22.6 9.4L40 72l-9.4-22.6L8 40l22.6-9.4z'/%3E%3Cpath d='M40 18l15.6 6.4L62 40l-6.4 15.6L40 62l-15.6-6.4L18 40l6.4-15.6z'/%3E%3Ccircle cx='40' cy='40' r='6'/%3E%3Cpath d='M0 0l8 8M80 0l-8 8M0 80l8-8M80 80l-8-8'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+}
+@utility gold-text {
+  background: linear-gradient(180deg, #f8e6b0 0%, #e2bd5c 55%, #c9a227 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+@utility scrollbar-thin { scrollbar-width: thin; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; }
+  .card { box-shadow: none !important; }
+  .print-full { margin: 0 !important; padding: 0 !important; }
+}
