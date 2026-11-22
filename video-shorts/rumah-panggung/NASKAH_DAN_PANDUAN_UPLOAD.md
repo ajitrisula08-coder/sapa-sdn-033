@@ -56,3 +56,12 @@ python3 make_video.py --preview preview.png   # cek gambar semua adegan
 python3 make_video.py                          # render MP4 (±1 menit)
 ```
 Ubah teks naskah di daftar `SCENES` dalam `make_video.py`. Kata di dalam `[kurung siku]` tampil berwarna kuning.
+
+## Versi dengan narasi
+
+`rumah_panggung_shorts_narasi.mp4` memakai narasi ElevenLabs suara "Bagas" (`narasi_bagas.mp3`, dibuat dengan paket **Free** → **hanya untuk uji coba, tidak boleh dimonetisasi**). Untuk versi monetisasi, buat ulang narasi dengan paket berbayar / suara sendiri, lalu jalankan:
+
+```bash
+python3 make_video.py --voice narasi_baru.mp3
+```
+Jika jeda kalimat di narasi baru berbeda, sesuaikan daftar `VOICE_SPANS` di `make_video.py`.

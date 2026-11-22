@@ -98,6 +98,40 @@ for _name, _line in SCENES:
     _t += _d
 TOTAL = _t
 
+# Waktu bicara tiap kalimat (detik) pada narasi ElevenLabs "Bagas",
+# diukur dari jeda/hening di file audio (ffmpeg silencedetect).
+VOICE_SPANS = [
+    (0.00, 2.82), (3.37, 6.02), (6.39, 8.54), (8.88, 11.63), (11.96, 15.54),
+    (15.91, 18.48), (18.85, 23.04), (23.40, 25.11), (25.45, 29.93), (30.32, 34.01),
+    (34.36, 36.93), (37.15, 40.05), (40.39, 43.93), (44.23, 46.44), (46.79, 51.28),
+    (51.56, 54.99), (55.28, 58.31), (58.61, 61.84), (62.14, 64.36),
+]
+VOICE = None
+
+
+def retime_to_voice(spans):
+    """Samakan durasi adegan & munculnya subtitle dengan narasi."""
+    global TOTAL
+    starts = [0.0] + [max(0.0, sp[0] - 0.2) for sp in spans[1:]]
+    for i, sc in enumerate(TIMELINE):
+        s0, e0 = spans[i]
+        sc["start"] = starts[i]
+        sc["dur"] = (starts[i + 1] if i + 1 < len(starts) else e0 + 2.6) - starts[i]
+        lens = [sum(len(w) + 1 for w, _ in c) for c in sc["chunks"]]
+        tot = sum(lens)
+        acc, times = 0, []
+        for ln in lens:
+            times.append(max(0.0, s0 + (e0 - s0) * acc / tot - starts[i] - 0.05))
+            acc += ln
+        sc["ctimes"] = times
+    TOTAL = TIMELINE[-1]["start"] + TIMELINE[-1]["dur"]
+
+
+if "--voice" in sys.argv:
+    VOICE = Path(sys.argv[sys.argv.index("--voice") + 1])
+    OUT = HERE / "rumah_panggung_shorts_narasi.mp4"
+    retime_to_voice(VOICE_SPANS)
+
 # ---------------------------------------------------------------- helpers --
 
 
@@ -1406,6 +1440,12 @@ def main():
         "ffmpeg", "-y", "-v", "error",
         "-f", "rawvideo", "-pix_fmt", "bgra", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
         "-i", str(audio),
+        *(["-i", str(VOICE)] if VOICE else []),
+        *(["-filter_complex",
+           "[2:a]aresample=44100,aformat=channel_layouts=stereo,volume=1.6,apad,asplit=2[v][sc];"
+           "[1:a]volume=0.45[m];[m][sc]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=400[duck];"
+           "[duck][v]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[aout]",
+           "-map", "0:v", "-map", "[aout]"] if VOICE else []),
         "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "160k", "-shortest", "-movflags", "+faststart", str(OUT),
     ], stdin=subprocess.PIPE)
