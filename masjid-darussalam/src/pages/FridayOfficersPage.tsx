@@ -1,6 +1,7 @@
 import { BellRing, BookOpen, Maximize, Mic, Minimize, Pencil, Star, Users, Volume2, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AnimatedName } from '../components/AnimatedName';
 import { LogoMark } from '../components/Logo';
 import { EmptyState, ErrorState, LoadingBlock } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
@@ -83,14 +84,17 @@ function Showcase({ s, big, tz, hijriOffset }: { s: FridaySchedule; big: boolean
             <div key={r.key} style={{ animationDelay: `${450 + i * 180}ms` }}
               className="group relative animate-rise-in overflow-hidden rounded-3xl bg-white/[0.07] p-5 ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-white/[0.11] sm:p-7">
               <StarOrnament className="pointer-events-none absolute -right-10 -top-10 size-40 animate-spin-slow text-gold-400/15" />
-              <div className="relative flex items-center justify-between">
-                <span className="inline-flex items-center gap-2 rounded-full bg-gold-400 px-3.5 py-1.5 text-sm font-bold uppercase tracking-wider text-slate-900">
-                  <Icon className="size-4" /> {r.label}
+              <div className="relative flex items-center justify-between gap-3">
+                <span className={`role-badge inline-flex items-center rounded-full bg-gradient-to-b from-gold-300 to-gold-500 font-extrabold uppercase tracking-wider text-slate-900 ${big ? 'gap-3 px-6 py-3 text-3xl' : 'gap-2.5 px-5 py-2.5 text-xl sm:text-2xl'}`}
+                  style={{ animationDelay: `${i * 0.4}s` }}>
+                  <Icon className={`animate-icon-swing ${big ? 'size-8' : 'size-6'}`} style={{ animationDelay: `${i * 0.3}s` }} /> {r.label}
                 </span>
-                <span className={`font-arabic text-gold-300/80 ${big ? 'text-4xl' : 'text-2xl'}`}>{r.arab}</span>
+                <span className={`font-arabic text-gold-300/85 ${big ? 'text-5xl' : 'text-3xl'}`}>{r.arab}</span>
               </div>
-              <p className={`relative mt-4 break-words font-display font-bold leading-[1.05] ${name ? 'gold-shimmer' : 'italic text-white/45'} ${big ? 'text-[clamp(3rem,5.2vw,6rem)]' : 'text-[clamp(2.1rem,5.5vw,3.6rem)]'}`}>
-                {name ?? 'Belum ditentukan'}
+              <p className={`relative mt-4 break-words font-display font-bold leading-[1.1] ${big ? 'text-[clamp(3rem,5.2vw,6rem)]' : 'text-[clamp(2.1rem,5.5vw,3.6rem)]'}`}>
+                {name
+                  ? <AnimatedName text={name} startDelay={700 + i * 220} />
+                  : <span className="italic text-white/45">Belum ditentukan</span>}
               </p>
             </div>
           );

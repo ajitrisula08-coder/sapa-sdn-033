@@ -1,6 +1,7 @@
 import { ArrowLeft, BellRing, BookOpen, Landmark, Maximize, Megaphone, Mic, Minimize, Moon, Star, Users, Volume2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { AnimatedName } from '../components/AnimatedName';
 import { LogoMark } from '../components/Logo';
 import { PRAYER_ICON } from '../components/PrayerWidgets';
 import { usePrayerStatus } from '../hooks/usePrayerStatus';
@@ -226,10 +227,12 @@ export default function TvPage() {
                 return (
                   <div key={r.key} className="flex animate-rise-in flex-col justify-center overflow-hidden rounded-[1.6vw] bg-white/[0.07] ring-1 ring-white/15"
                     style={{ padding: `${u(1.4)} ${u(2.2)}`, animationDelay: `${250 + i * 160}ms` }}>
-                    <span className="inline-flex w-fit items-center rounded-full bg-gold-400 font-bold uppercase text-slate-900" style={{ gap: u(0.5), padding: `${u(0.35)} ${u(1)}`, fontSize: u(1.4), letterSpacing: '0.1em' }}>
-                      <Icon style={{ width: u(1.5), height: u(1.5) }} /> {r.label}
+                    <span className="role-badge inline-flex w-fit items-center rounded-full bg-gradient-to-b from-gold-300 to-gold-500 font-extrabold uppercase text-slate-900" style={{ gap: u(0.7), padding: `${u(0.5)} ${u(1.5)}`, fontSize: u(2.1), letterSpacing: '0.1em', animationDelay: `${i * 0.4}s` }}>
+                      <Icon className="animate-icon-swing" style={{ width: u(2.2), height: u(2.2), animationDelay: `${i * 0.3}s` }} /> {r.label}
                     </span>
-                    <p className={`font-display font-bold leading-[1.05] ${name ? 'gold-shimmer' : 'italic text-white/45'}`} style={{ fontSize: u(name && name.length > 22 ? 4.2 : 5.4), marginTop: u(0.6) }}>{name ?? 'Belum ditentukan'}</p>
+                    <p className={`font-display font-bold leading-[1.1] ${name ? '' : 'italic text-white/45'}`} style={{ fontSize: u(name && name.length > 22 ? 4.2 : 5.2), marginTop: u(0.7) }}>
+                      {name ? <AnimatedName text={name} startDelay={500 + i * 220} replayMs={0} /> : 'Belum ditentukan'}
+                    </p>
                   </div>
                 );
               })}

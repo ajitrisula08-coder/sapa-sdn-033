@@ -53,10 +53,33 @@
     0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-gold-400) 45%, transparent); }
     50% { box-shadow: 0 0 0 10px transparent; }
   }
+  --animate-icon-swing: icon-swing 2.4s ease-in-out infinite;
+  @keyframes icon-swing {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(-12deg) scale(1.1); }
+    75% { transform: rotate(12deg) scale(1.1); }
+  }
   @keyframes pop {
     from { opacity: 0; transform: scale(0.6); }
     to { opacity: 1; transform: none; }
   }
+}
+
+/* Keyframes dipakai langsung lewat style inline (selalu disertakan) */
+@keyframes letter-in {
+  0% { opacity: 0; transform: translateY(0.7em) rotate(-8deg) scale(0.6); filter: blur(6px); }
+  60% { opacity: 1; transform: translateY(-0.08em) rotate(2deg) scale(1.06); filter: none; }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes letter-wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-0.07em); }
+}
+
+@keyframes badge-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(226 189 92 / 0.55), 0 6px 18px -6px rgb(0 0 0 / 0.35); }
+  50% { box-shadow: 0 0 0 0.35em rgb(226 189 92 / 0), 0 6px 18px -6px rgb(0 0 0 / 0.35); }
 }
 
 @layer base {
@@ -100,6 +123,18 @@
     radial-gradient(800px 400px at -10% 110%, rgb(201 162 39 / 0.18), transparent 60%),
     linear-gradient(160deg, var(--color-emerald-800) 0%, color-mix(in oklab, var(--color-emerald-900) 70%, var(--color-emerald-950)) 55%, var(--color-emerald-950) 100%);
   transition: background-color 0.6s;
+}
+/* Huruf nama petugas: muncul satu per satu, lalu bergelombang & berkilau */
+@utility name-letter {
+  display: inline-block;
+  background: linear-gradient(100deg, #e2bd5c 0%, #fff4cf 22%, #e2bd5c 40%, #c9a227 60%, #f8e6b0 80%, #e2bd5c 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  will-change: transform;
+}
+/* Label tugas (Imam/Khatib/Bilal/Muazin) dengan denyut cahaya */
+@utility role-badge {
+  animation: badge-glow 2.6s ease-in-out infinite;
 }
 /* Teks emas berkilau bergerak (nama petugas Jumat) */
 @utility gold-shimmer {
