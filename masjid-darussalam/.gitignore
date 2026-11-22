@@ -5,3 +5,4 @@ dist
 *.log
 *.tsbuildinfo
 pages-dist
+repo-dist
