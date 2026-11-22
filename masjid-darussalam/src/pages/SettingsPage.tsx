@@ -1,8 +1,9 @@
 import { TV_URL } from '../components/nav';
-import { BookOpenText, Building2, Check, Clock4, History, KeyRound, Landmark, LocateFixed, MonitorPlay, Palette, Save, Settings, Shuffle } from 'lucide-react';
+import { BookOpenText, Building2, MessageCircle, Check, Clock4, History, KeyRound, Landmark, LocateFixed, MonitorPlay, Palette, Save, Settings, Shuffle } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { RequireAdmin } from '../components/AdminGate';
 import { AuditList } from '../components/AuditList';
+import { WaAutoSettings } from '../components/WaAutoSettings';
 import { Field, PageHeader, useConfirm } from '../components/ui';
 import { setPreviewTheme, useSettings } from '../context/SettingsContext';
 import { activeTheme, THEMES } from '../lib/themes';
@@ -223,6 +224,10 @@ function SettingsForm() {
           <label className="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" className="size-4 accent-emerald-700" checked={f.ramadan_mode} onChange={(e) => set({ ramadan_mode: e.target.checked })} /> Aktifkan Mode Ramadan di layar TV (menampilkan waktu imsak & berbuka)</label>
           <a href={TV_URL} target="_blank" rel="noreferrer" className="btn-gold"><MonitorPlay className="size-4" /> Buka layar TV</a>
         </div>
+      </Section>
+
+      <Section id="whatsapp" icon={MessageCircle} title="Pengingat WhatsApp Otomatis" desc="Kirim pengingat tugas ke petugas Jumat secara otomatis setiap Kamis melalui layanan Fonnte.">
+        <WaAutoSettings />
       </Section>
 
       <Section id="akun" icon={KeyRound} title="Akun Administrator" desc="Ganti kata sandi login admin. Pendaftaran admin baru tidak tersedia untuk publik.">

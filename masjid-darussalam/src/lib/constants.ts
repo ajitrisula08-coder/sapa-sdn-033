@@ -42,6 +42,7 @@ export const DEFAULT_SETTINGS: MosqueSettings = {
   theme_rotate: false,
   tv_friday_slide: true,
   tv_daily_quotes: true,
+  wa_auto_enabled: false,
 };
 
 export const CALC_METHODS: Record<CalcMethod, { label: string; detail: string }> = {

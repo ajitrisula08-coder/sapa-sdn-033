@@ -1,4 +1,4 @@
-import { CheckCircle2, Copy, MessageCircle, Phone, Send, Users } from 'lucide-react';
+import { Bot, CheckCircle2, Copy, Loader2, MessageCircle, Phone, Send, Users } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
@@ -11,7 +11,8 @@ import {
   groupMessage, normalizeWhatsapp, prettyWhatsapp, REMINDER_ROLES, reminderMessage, waLink, type ReminderRole,
 } from '../lib/whatsapp';
 import type { FridaySchedule } from '../lib/types';
-import { Badge, EmptyState, ErrorState, LoadingBlock } from './ui';
+import { Badge, EmptyState, ErrorState, LoadingBlock, useConfirm } from './ui';
+import { callFn } from './WaAutoSettings';
 
 async function copyText(text: string, toast: { success: (m: string) => void; error: (m: string) => void }) {
   try { await navigator.clipboard.writeText(text); toast.success('Pesan disalin. Tempel di WhatsApp.'); }
@@ -105,6 +106,24 @@ export function FridayReminderPanel() {
   const phoneOf = (officerId: string | null) => contacts.data?.find((c) => c.officer_id === officerId)?.whatsapp ?? null;
   const sentAt = (role: ReminderRole) => reminders.data?.find((r) => r.role === role)?.sent_at ?? null;
   const isThursday = parseISODate(today).getUTCDay() === 4;
+  const confirm = useConfirm();
+  const [autoSending, setAutoSending] = useState(false);
+
+  async function sendAuto() {
+    const r = await confirm({
+      title: 'Kirim otomatis lewat WA masjid?',
+      message: 'Pesan pengingat akan dikirim langsung dari nomor WhatsApp masjid (Fonnte) ke petugas Jumat terdekat yang belum diingatkan.',
+      confirmLabel: 'Ya, kirim sekarang',
+    });
+    if (!r.ok) return;
+    setAutoSending(true);
+    try {
+      const res = await callFn<{ results?: { role: string; nama?: string; status: string }[]; skipped?: string }>({ mode: 'send' });
+      if (res.skipped) toast.info(res.skipped);
+      else toast.success((res.results ?? []).map((x) => `${x.role.toUpperCase()}${x.nama ? ` (${x.nama})` : ''}: ${x.status}`).join(' · '));
+      void reminders.reload(true);
+    } catch (e) { toast.error(friendlyError(e)); } finally { setAutoSending(false); }
+  }
 
   if (schedules.loading) return <LoadingBlock />;
   if (schedules.error) return <ErrorState message={schedules.error} onRetry={() => schedules.reload()} />;
@@ -122,11 +141,18 @@ export function FridayReminderPanel() {
             {isThursday ? 'Hari ini Kamis — waktu yang tepat untuk mengingatkan petugas.' : 'Disarankan dikirim setiap hari Kamis.'} Buka halaman ini di HP agar WhatsApp langsung terbuka.
           </p>
         </div>
+        <div className="flex flex-col gap-2 sm:items-end">
+        {settings.wa_auto_enabled && (
+          <button className="btn-primary" disabled={autoSending} onClick={sendAuto}>
+            {autoSending ? <Loader2 className="size-4 animate-spin" /> : <Bot className="size-4" />} Kirim otomatis sekarang
+          </button>
+        )}
         {list.length > 1 && (
           <select className="input sm:w-56" value={sel.id} onChange={(e) => setSelectedId(e.target.value)} aria-label="Pilih tanggal Jumat">
             {list.map((x) => <option key={x.id} value={x.id}>{formatDateLong(x.friday_date)}</option>)}
           </select>
         )}
+        </div>
       </div>
 
       {contacts.error && <ErrorState message={contacts.error} onRetry={() => contacts.reload()} />}

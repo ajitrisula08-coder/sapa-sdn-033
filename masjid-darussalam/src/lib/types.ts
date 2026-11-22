@@ -31,6 +31,7 @@ export interface MosqueSettings {
   theme_rotate: boolean;
   tv_friday_slide: boolean;
   tv_daily_quotes: boolean;
+  wa_auto_enabled: boolean;
   updated_at?: string;
 }
 
