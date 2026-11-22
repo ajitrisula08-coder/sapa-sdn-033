@@ -8,8 +8,8 @@ import type {
  * di database (tabel mosque_settings). Dipakai sebelum data dari database dimuat,
  * atau bila aplikasi belum dihubungkan ke Supabase.
  *
- * CATATAN: koordinat ini adalah titik PERKIRAAN Kecamatan Muara Kaman, bukan
- * titik tepat masjid. Admin wajib memperbaruinya di menu Pengaturan.
+ * Koordinat masjid dari Google Maps (dikonfirmasi pengurus, 22 Nov 2026).
+ * Nilai yang berlaku tetap diambil dari database (menu Pengaturan).
  */
 export const DEFAULT_SETTINGS: MosqueSettings = {
   id: 1,
@@ -20,9 +20,9 @@ export const DEFAULT_SETTINGS: MosqueSettings = {
   regency: 'Kabupaten Kutai Kartanegara',
   province: 'Kalimantan Timur',
   logo_url: null,
-  latitude: -0.0636,
-  longitude: 116.8614,
-  coordinates_verified: false,
+  latitude: -0.275537,
+  longitude: 116.855425,
+  coordinates_verified: true,
   timezone: 'Asia/Makassar',
   calc_method: 'KEMENAG',
   madhab: 'SYAFII',
