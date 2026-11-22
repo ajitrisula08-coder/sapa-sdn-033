@@ -6,7 +6,7 @@ import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { LogoMark } from './Logo';
-import { BOTTOM_NAV, NAV_ITEMS } from './nav';
+import { BOTTOM_NAV, NAV_ITEMS, TV_URL } from './nav';
 
 function Brand({ compact = false }: { compact?: boolean }) {
   const { settings } = useSettings();
@@ -70,7 +70,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="relative flex-1 overflow-y-auto px-3 py-4 scrollbar-thin"><NavList onNavigate={onNavigate} /></div>
       <div className="relative space-y-3 p-4">
         <AdminCard />
-        <a href="/tv" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-gold-400 to-gold-500 px-4 py-2.5 text-sm font-semibold text-emerald-950 shadow hover:from-gold-300">
+        <a href={TV_URL} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-gold-400 to-gold-500 px-4 py-2.5 text-sm font-semibold text-emerald-950 shadow hover:from-gold-300">
           <MonitorPlay className="size-4" /> Buka Mode TV Masjid
         </a>
       </div>

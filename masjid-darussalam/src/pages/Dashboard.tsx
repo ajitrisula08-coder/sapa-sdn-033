@@ -3,6 +3,7 @@ import {
   Megaphone, MonitorPlay, Users, Wallet,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { TV_URL } from '../components/nav';
 import { IncomeExpenseChart } from '../components/FinanceChart';
 import { LogoMark } from '../components/Logo';
 import { PrayerCards } from '../components/PrayerWidgets';
@@ -81,7 +82,7 @@ function Hero() {
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link to="/jadwal-salat" className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-2 text-xs font-semibold hover:bg-white/15"><Clock4 className="size-4" /> Jadwal bulanan</Link>
-            <a href="/tv" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-xl bg-gold-400 px-3 py-2 text-xs font-bold text-emerald-950 hover:bg-gold-300"><MonitorPlay className="size-4" /> Mode TV</a>
+            <a href={TV_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-xl bg-gold-400 px-3 py-2 text-xs font-bold text-emerald-950 hover:bg-gold-300"><MonitorPlay className="size-4" /> Mode TV</a>
           </div>
         </div>
       </div>

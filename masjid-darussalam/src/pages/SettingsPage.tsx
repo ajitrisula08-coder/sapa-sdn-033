@@ -1,3 +1,4 @@
+import { TV_URL } from '../components/nav';
 import { Building2, Clock4, History, KeyRound, Landmark, LocateFixed, MonitorPlay, Save, Settings } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { RequireAdmin } from '../components/AdminGate';
@@ -171,7 +172,7 @@ function SettingsForm() {
             <textarea className="input min-h-20" maxLength={500} value={f.tv_running_text ?? ''} onChange={(e) => set({ tv_running_text: e.target.value || null })} />
           </Field>
           <label className="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" className="size-4 accent-emerald-700" checked={f.ramadan_mode} onChange={(e) => set({ ramadan_mode: e.target.checked })} /> Aktifkan Mode Ramadan di layar TV (menampilkan waktu imsak & berbuka)</label>
-          <a href="/tv" target="_blank" rel="noreferrer" className="btn-gold"><MonitorPlay className="size-4" /> Buka layar TV</a>
+          <a href={TV_URL} target="_blank" rel="noreferrer" className="btn-gold"><MonitorPlay className="size-4" /> Buka layar TV</a>
         </div>
       </Section>
 

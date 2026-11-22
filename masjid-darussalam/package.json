@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:pages": "tsc -b && vite build --base=/sapa-sdn-033/masjid/ --outDir pages-dist --emptyOutDir && node scripts/pages-routes.mjs pages-dist"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.2",

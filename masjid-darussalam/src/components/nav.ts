@@ -20,3 +20,6 @@ export const NAV_ITEMS: NavItem[] = [
 
 export const BOTTOM_NAV = ['/', '/jadwal-salat', '/keuangan', '/agenda'];
 export { CalendarClock };
+
+/** Alamat layar TV, mengikuti base path (mis. /sapa-sdn-033/masjid/tv di GitHub Pages). */
+export const TV_URL = `${import.meta.env.BASE_URL}tv`;
