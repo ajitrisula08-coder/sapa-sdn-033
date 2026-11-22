@@ -206,3 +206,17 @@ export interface AuditLog {
   reason: string | null;
   changed_at: string;
 }
+
+export interface OfficerContact {
+  officer_id: string;
+  whatsapp: string;
+}
+
+export interface FridayReminder {
+  id: string;
+  schedule_id: string;
+  role: 'imam' | 'khatib' | 'bilal';
+  officer_id: string | null;
+  channel: 'manual' | 'otomatis';
+  sent_at: string;
+}

@@ -1,6 +1,7 @@
-import { BookOpen, CalendarPlus, History, Maximize, Pencil, Plus, Trash2, UserPlus, Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { BookOpen, CalendarPlus, History, Maximize, MessageCircle, Pencil, Phone, Plus, Trash2, UserPlus, Users } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { FridayReminderPanel } from '../components/FridayReminderPanel';
+import { useEffect, useState } from 'react';
 import { AdminOnly } from '../components/AdminGate';
 import { Badge, EmptyState, ErrorState, Field, LoadingBlock, Modal, PageHeader, useConfirm } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
@@ -8,12 +9,13 @@ import { useSettings } from '../context/SettingsContext';
 import { useToast } from '../context/ToastContext';
 import { useQuery } from '../hooks/useQuery';
 import {
-  deleteFridaySchedule, deleteOfficer, friendlyError, getFridaySchedules, getOfficers, getOfficerStats, saveFridaySchedule, saveOfficer,
+  deleteFridaySchedule, deleteOfficer, friendlyError, getFridaySchedules, getOfficerContacts, getOfficers, getOfficerStats, saveFridaySchedule, saveOfficer, saveOfficerContact,
 } from '../lib/api';
 import { ROLE_LABEL } from '../lib/constants';
 import { emitDataChanged } from '../lib/events';
 import { addDaysISO, formatDate, formatDateLong, hhmm, parseISODate, todayISO } from '../lib/format';
 import { isSupabaseConfigured } from '../lib/supabase';
+import { normalizeWhatsapp, prettyWhatsapp } from '../lib/whatsapp';
 import type { FridayOfficer, FridaySchedule, OfficerRole } from '../lib/types';
 
 // Di Masjid Darussalam, tugas muazin dirangkap oleh bilal.
@@ -83,12 +85,25 @@ function OfficerModal({ initial, onClose }: { initial: Partial<FridayOfficer>; o
   const toast = useToast();
   const [f, setF] = useState<Partial<FridayOfficer>>({ roles: [], is_active: true, ...initial });
   const [saving, setSaving] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [phoneLoaded, setPhoneLoaded] = useState(!initial.id);
+  useEffect(() => {
+    if (!initial.id) return;
+    getOfficerContacts().then((cs) => {
+      const c = cs.find((x) => x.officer_id === initial.id);
+      if (c) setPhone(prettyWhatsapp(c.whatsapp));
+    }).catch(() => undefined).finally(() => setPhoneLoaded(true));
+  }, [initial.id]);
   async function save() {
     if (!f.full_name || f.full_name.trim().length < 2) { toast.error('Nama petugas wajib diisi.'); return; }
     if (!f.roles?.filter((r) => r !== 'muazin').length) { toast.error('Pilih minimal satu peran.'); return; }
+    const wa = phone.trim() ? normalizeWhatsapp(phone) : null;
+    if (phone.trim() && !wa) { toast.error('Nomor WhatsApp tidak valid. Contoh: 0812 3456 7890'); return; }
     setSaving(true);
     try {
-      await saveOfficer({ id: f.id, full_name: f.full_name.trim(), roles: f.roles.filter((r) => r !== 'muazin'), notes: f.notes?.trim() || null, is_active: f.is_active ?? true });
+      const saved = await saveOfficer({ id: f.id, full_name: f.full_name.trim(), roles: f.roles.filter((r) => r !== 'muazin'), notes: f.notes?.trim() || null, is_active: f.is_active ?? true });
+      if (phoneLoaded) await saveOfficerContact(saved.id, wa);
+      emitDataChanged('contacts');
       toast.success('Data petugas disimpan.');
       emitDataChanged('friday');
       onClose();
@@ -113,6 +128,12 @@ function OfficerModal({ initial, onClose }: { initial: Partial<FridayOfficer>; o
             })}
           </div>
         </div>
+        <Field label="Nomor WhatsApp (opsional)" hint="Untuk pengingat tugas Jumat. Bersifat PRIVAT: hanya admin yang dapat melihat, tidak tampil ke jamaah.">
+          <div className="relative">
+            <Phone className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+            <input className="input pl-9" inputMode="tel" placeholder="0812 3456 7890" value={phone} disabled={!phoneLoaded} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+        </Field>
         <Field label="Catatan"><input className="input" maxLength={300} value={f.notes ?? ''} onChange={(e) => setF({ ...f, notes: e.target.value })} /></Field>
         <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
           <input type="checkbox" className="size-4 accent-emerald-700" checked={f.is_active ?? true} onChange={(e) => setF({ ...f, is_active: e.target.checked })} /> Petugas aktif
@@ -165,7 +186,10 @@ export default function FridayPage() {
   const toast = useToast();
   const confirm = useConfirm();
   const today = todayISO();
-  const [tab, setTab] = useState<'upcoming' | 'history' | 'officers'>('upcoming');
+  const [params, setParams] = useSearchParams();
+  const tabParam = params.get('tab');
+  const [tab, setTabState] = useState<'upcoming' | 'history' | 'officers' | 'pengingat'>(tabParam === 'pengingat' ? 'pengingat' : 'upcoming');
+  const setTab = (t: typeof tab) => { setTabState(t); setParams(t === 'pengingat' ? { tab: t } : {}, { replace: true }); };
   const upcoming = useQuery(() => getFridaySchedules({ from: today, ascending: true, limit: 12 }), [today], { topics: ['friday'] });
   const history = useQuery(() => getFridaySchedules({ to: addDaysISO(today, -1), ascending: false, limit: 52 }), [today], { topics: ['friday'], enabled: tab === 'history' });
   const officers = useQuery(getOfficers, [], { topics: ['friday'] });
@@ -188,6 +212,7 @@ export default function FridayPage() {
     { id: 'upcoming', label: 'Jadwal Mendatang', icon: CalendarPlus },
     { id: 'history', label: 'Riwayat Petugas', icon: History },
     { id: 'officers', label: 'Daftar Petugas', icon: Users },
+    ...(isAdmin ? [{ id: 'pengingat', label: 'Pengingat WA', icon: MessageCircle }] as const : []),
   ] as const;
 
   const newSchedule = () => setEditSched({ friday_date: nextFridayISO(today), start_time: settings.friday_default_time });
@@ -212,7 +237,9 @@ export default function FridayPage() {
       </div>
 
       <div key={tab} className="animate-fade-up">
-      {!isSupabaseConfigured ? <div className="card"><EmptyState title="Belum terhubung ke database" /></div> : tab === 'upcoming' ? (
+      {!isSupabaseConfigured ? <div className="card"><EmptyState title="Belum terhubung ke database" /></div> : tab === 'pengingat' ? (
+        isAdmin ? <FridayReminderPanel /> : <div className="card"><EmptyState title="Khusus administrator" /></div>
+      ) : tab === 'upcoming' ? (
         upcoming.loading ? <LoadingBlock /> : upcoming.error ? <ErrorState message={upcoming.error} onRetry={() => upcoming.reload()} />
           : !upcoming.data?.length ? (
             <div className="card"><EmptyState icon={Users} title="Belum ada jadwal Jumat mendatang" description="Data petugas Jumat dimasukkan langsung oleh administrator masjid."

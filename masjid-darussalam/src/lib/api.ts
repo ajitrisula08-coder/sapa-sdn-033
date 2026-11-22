@@ -1,6 +1,6 @@
 import { isSupabaseConfigured, PROOF_BUCKET, supabase } from './supabase';
 import type {
-  Activity, Announcement, AuditLog, CategoryTotal, FinanceSummary, FridayOfficer, FridaySchedule,
+  Activity, Announcement, AuditLog, FridayReminder, OfficerContact, CategoryTotal, FinanceSummary, FridayOfficer, FridaySchedule,
   Inventory, MonthlyFinance, MosqueSettings, OfficerStats, PrayerOverride, PublicTransaction,
   Transaction, TrxCategory, TrxType,
 } from './types';
@@ -79,13 +79,28 @@ export async function getOfficers(): Promise<FridayOfficer[]> {
 export async function getOfficerStats(): Promise<OfficerStats[]> {
   return ensure(await supabase.from('friday_officer_stats').select('*').order('full_name'));
 }
-export async function saveOfficer(row: Partial<FridayOfficer>) {
+export async function saveOfficer(row: Partial<FridayOfficer>): Promise<FridayOfficer> {
   const { id, ...rest } = row;
-  if (id) ensure(await supabase.from('friday_officers').update(rest).eq('id', id).select().single());
-  else ensure(await supabase.from('friday_officers').insert(rest).select().single());
+  if (id) return ensure(await supabase.from('friday_officers').update(rest).eq('id', id).select().single()) as FridayOfficer;
+  return ensure(await supabase.from('friday_officers').insert(rest).select().single()) as FridayOfficer;
 }
 export async function deleteOfficer(id: string) {
   ensure(await supabase.from('friday_officers').delete().eq('id', id));
+}
+
+// ---------------- Kontak WA petugas & pengingat (hanya admin) ----------------
+export async function getOfficerContacts(): Promise<OfficerContact[]> {
+  return ensure(await supabase.from('officer_contacts').select('officer_id, whatsapp'));
+}
+export async function saveOfficerContact(officerId: string, whatsapp: string | null) {
+  if (whatsapp) ensure(await supabase.from('officer_contacts').upsert({ officer_id: officerId, whatsapp }, { onConflict: 'officer_id' }).select().single());
+  else ensure(await supabase.from('officer_contacts').delete().eq('officer_id', officerId));
+}
+export async function getFridayReminders(scheduleId: string): Promise<FridayReminder[]> {
+  return ensure(await supabase.from('friday_reminders').select('*').eq('schedule_id', scheduleId).order('sent_at', { ascending: false }));
+}
+export async function logFridayReminder(row: { schedule_id: string; role: FridayReminder['role']; officer_id: string | null }) {
+  ensure(await supabase.from('friday_reminders').insert({ ...row, channel: 'manual' }).select().single());
 }
 
 // ---------------- Keuangan ----------------

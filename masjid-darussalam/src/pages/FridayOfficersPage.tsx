@@ -1,4 +1,4 @@
-import { BellRing, BookOpen, Maximize, Mic, Minimize, Pencil, Star, Users, X } from 'lucide-react';
+import { BellRing, BookOpen, Maximize, MessageCircle, Mic, Minimize, Pencil, Star, Users, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatedName } from '../components/AnimatedName';
@@ -155,6 +155,7 @@ export default function FridayOfficersPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           {isAdmin && <Link to="/jumat" className="btn-outline"><Pencil className="size-4" /> Kelola jadwal</Link>}
+          {isAdmin && <Link to="/jumat?tab=pengingat" className="btn bg-[#25D366] text-white hover:bg-[#1ebe5a]"><MessageCircle className="size-4" /> Pengingat WA</Link>}
           {sel && <button className="btn-gold" onClick={openPresentation}><Maximize className="size-4" /> Layar penuh</button>}
         </div>
       </div>

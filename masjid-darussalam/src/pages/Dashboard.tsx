@@ -1,5 +1,5 @@
 import {
-  ArrowDownRight, ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Clock4, Info, Landmark, MapPin,
+  ArrowDownRight, ArrowRight, ArrowUpRight, BellRing, BookOpen, CalendarDays, Clock4, Info, Landmark, MapPin,
   Megaphone, MonitorPlay, Users, Wallet,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -7,13 +7,15 @@ import { TV_URL } from '../components/nav';
 import { IncomeExpenseChart } from '../components/FinanceChart';
 import { LogoMark } from '../components/Logo';
 import { PrayerCards } from '../components/PrayerWidgets';
+import { useAuth } from '../context/AuthContext';
 import { AnimatedNumber, Badge, EmptyState, ErrorState, Skeleton } from '../components/ui';
+import { useNow } from '../hooks/useNow';
 import { usePrayerStatus } from '../hooks/usePrayerStatus';
 import { useQuery } from '../hooks/useQuery';
 import { getActivities, getAnnouncements, getFinanceMonthly, getFinanceSummary, getNextFriday } from '../lib/api';
 import { ACTIVITY_CATEGORY, ANNOUNCEMENT_CATEGORY, CALC_METHODS, PRAYER_LABEL, TIMEZONE_LABEL } from '../lib/constants';
 import {
-  formatClock, formatCountdown, formatDate, formatDateLong, formatDayShort, hhmm, hijriDate, rupiah, todayISO,
+  formatClock, formatCountdown, formatDate, formatDateLong, formatDayShort, hhmm, hijriDate, parseISODate, rupiah, todayISO,
 } from '../lib/format';
 import { formatPrayerTime } from '../lib/prayer';
 import { isSupabaseConfigured } from '../lib/supabase';
@@ -259,9 +261,30 @@ function AgendaCard() {
   );
 }
 
+/** Pengingat untuk admin: setiap Kamis (dan Jumat pagi) kirim WA ke petugas Jumat. */
+function ReminderNudge() {
+  const { isAdmin } = useAuth();
+  const now = useNow(60_000);
+  const today = todayISO(undefined, now);
+  const dow = parseISODate(today).getUTCDay();
+  const hour = Number(now.toLocaleString('en-GB', { hour: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }));
+  if (!isAdmin || !(dow === 4 || (dow === 5 && hour < 11))) return null;
+  return (
+    <Link to="/jumat?tab=pengingat" className="flex animate-fade-up items-center gap-4 rounded-2xl bg-gradient-to-r from-gold-300 to-gold-400 p-4 text-slate-900 shadow-soft transition hover:shadow-lift sm:p-5">
+      <span className="grid size-12 shrink-0 animate-glow place-items-center rounded-2xl bg-white/60"><BellRing className="size-6 animate-icon-swing" /></span>
+      <span className="flex-1">
+        <b className="block text-base">{dow === 4 ? 'Hari ini Kamis' : 'Hari ini Jumat'} — ingatkan petugas sholat Jumat</b>
+        <span className="text-sm">Kirim pesan WhatsApp ke Imam, Khatib, dan Bilal agar mereka bersiap.</span>
+      </span>
+      <ArrowRight className="size-5 shrink-0" />
+    </Link>
+  );
+}
+
 export default function Dashboard() {
   return (
     <div className="space-y-8">
+      <ReminderNudge />
       <Hero />
       <PrayerSection />
       <div className="grid gap-6 lg:grid-cols-2">
