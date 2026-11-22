@@ -66,7 +66,7 @@ function Hero() {
           </div>
         </div>
         <div className="rounded-3xl bg-white/[0.07] p-5 ring-1 ring-white/12 backdrop-blur-sm">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-300">Salat berikutnya</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-300">Sholat berikutnya</p>
           <div className="mt-2 flex items-end justify-between gap-3">
             <div>
               <p className="font-display text-4xl font-bold">{PRAYER_LABEL[status.next.key]}</p>
@@ -94,7 +94,7 @@ function PrayerSection() {
   const { settings, status } = usePrayerStatus();
   return (
     <section>
-      <SectionTitle icon={Clock4} title="Jadwal Salat Hari Ini" to="/jadwal-salat" linkLabel="Detail" />
+      <SectionTitle icon={Clock4} title="Jadwal Sholat Hari Ini" to="/jadwal-salat" linkLabel="Detail" />
       <PrayerCards status={status} tz={settings.timezone} />
       <p className="mt-3 flex items-start gap-1.5 text-xs text-slate-500">
         <Info className="mt-0.5 size-3.5 shrink-0" />
@@ -116,7 +116,7 @@ function FridayCard() {
   ] : [];
   return (
     <div className="card relative h-full overflow-hidden p-5">
-      <SectionTitle icon={Users} title="Salat Jumat" to="/jumat" />
+      <SectionTitle icon={Users} title="Sholat Jumat" to="/jumat" />
       {!isSupabaseConfigured ? <EmptyState title="Belum terhubung ke database" />
         : q.loading ? <div className="space-y-3"><Skeleton className="h-6 w-2/3" /><Skeleton className="h-24" /></div>
         : q.error ? <ErrorState message={q.error} onRetry={() => q.reload()} />

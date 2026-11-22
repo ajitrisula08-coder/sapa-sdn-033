@@ -17,7 +17,7 @@ export function friendlyError(err: unknown): string {
   if (/duplicate key.*prayer_schedules/i.test(raw)) return 'Jadwal manual untuk tanggal tersebut sudah ada.';
   if (/violates foreign key.*friday/i.test(raw)) return 'Petugas masih tercatat pada jadwal Jumat sehingga tidak dapat dihapus. Nonaktifkan saja.';
   if (/friday_date_check/i.test(raw)) return 'Tanggal yang dipilih bukan hari Jumat.';
-  if (/prayer_schedules_order/i.test(raw)) return 'Urutan waktu salat tidak logis (Subuh < Zuhur < Asar < Magrib < Isya).';
+  if (/prayer_schedules_order/i.test(raw)) return 'Urutan waktu sholat tidak logis (Subuh < Zuhur < Asar < Magrib < Isya).';
   if (/check constraint/i.test(raw)) return 'Data tidak valid. Periksa kembali isian Anda.';
   return raw;
 }
@@ -39,7 +39,7 @@ export async function updateSettings(patch: Partial<MosqueSettings> & { change_r
   ensure(await supabase.from('mosque_settings').update(rest).eq('id', 1).select().single());
 }
 
-// ---------------- Jadwal salat ----------------
+// ---------------- Jadwal sholat ----------------
 export async function getPrayerOverrides(from: string, to: string): Promise<PrayerOverride[]> {
   return ensure(await supabase.from('prayer_schedules').select('*').gte('schedule_date', from).lte('schedule_date', to).order('schedule_date'));
 }

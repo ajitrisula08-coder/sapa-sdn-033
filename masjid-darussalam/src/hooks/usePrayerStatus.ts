@@ -11,7 +11,7 @@ export function usePrayerStatus() {
   const status = useMemo(() => prayerStatus(new Date(minuteKey * 60000 + 59999), settings, overrides),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [minuteKey, settings, overrides]);
-  // Pastikan "berikutnya" benar pada detik saat waktu salat tiba.
+  // Pastikan "berikutnya" benar pada detik saat waktu sholat tiba.
   const fresh = status.next.at <= now ? prayerStatus(now, settings, overrides) : status;
   return { now, settings, status: fresh, remainingMs: fresh.next.at.getTime() - now.getTime() };
 }

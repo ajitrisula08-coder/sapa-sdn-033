@@ -42,7 +42,7 @@ function Countdown({ target, big }: { target: Date; big: boolean }) {
   if (ms <= 0) {
     return (
       <p className={`inline-flex animate-glow items-center gap-2 rounded-full bg-gold-400 px-5 py-2 font-bold text-slate-900 ${big ? 'text-2xl' : 'text-base'}`}>
-        {now.getTime() < endMs ? 'Salat Jumat sedang berlangsung' : 'Salat Jumat telah selesai'}
+        {now.getTime() < endMs ? 'Sholat Jumat sedang berlangsung' : 'Sholat Jumat telah selesai'}
       </p>
     );
   }
@@ -68,7 +68,7 @@ function Showcase({ s, big, tz, hijriOffset }: { s: FridaySchedule; big: boolean
   return (
     <div className="relative">
       <div className="text-center">
-        <p className="animate-rise-in text-xs font-bold uppercase tracking-[0.3em] text-gold-300 sm:text-sm">Petugas Salat Jumat</p>
+        <p className="animate-rise-in text-xs font-bold uppercase tracking-[0.3em] text-gold-300 sm:text-sm">Petugas Sholat Jumat</p>
         <h2 className={`mt-2 animate-rise-in font-display font-bold leading-tight [animation-delay:100ms] ${big ? 'text-6xl' : 'text-4xl sm:text-5xl'}`}>{formatDateLong(s.friday_date)}</h2>
         <p className={`mt-1 animate-rise-in text-emerald-50/80 [animation-delay:200ms] ${big ? 'text-2xl' : 'text-base'}`}>
           {hijriDate(parseISODate(s.friday_date), 'UTC', hijriOffset)} · Pukul {hhmm(s.start_time)} WITA
@@ -150,7 +150,7 @@ export default function FridayOfficersPage() {
           <div className="grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-800 text-gold-300 shadow-soft"><Users className="size-6" /></div>
           <div>
             <h1 className="font-display text-3xl font-bold text-emerald-950 sm:text-[2.1rem]">Petugas Jumat</h1>
-            <p className="text-sm text-slate-500">Tampilan besar petugas salat Jumat pekan ini</p>
+            <p className="text-sm text-slate-500">Tampilan besar petugas sholat Jumat pekan ini</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -174,7 +174,7 @@ export default function FridayOfficersPage() {
         : q.loading && !q.data ? <LoadingBlock />
         : q.error ? <ErrorState message={q.error} onRetry={() => q.reload()} />
         : !sel ? (
-          <div className="card"><EmptyState icon={Users} title="Jadwal Jumat berikutnya belum diisi" description="Petugas Jumat dimasukkan oleh administrator di menu Salat Jumat."
+          <div className="card"><EmptyState icon={Users} title="Jadwal Jumat berikutnya belum diisi" description="Petugas Jumat dimasukkan oleh administrator di menu Sholat Jumat."
             action={isAdmin ? <Link to="/jumat" className="btn-primary">Isi jadwal Jumat</Link> : undefined} /></div>
         ) : (
           <div ref={stageRef} className="bg-islamic relative overflow-hidden rounded-[32px] px-5 py-8 text-white shadow-lift sm:px-10 sm:py-12">

@@ -30,7 +30,7 @@ function OverrideModal({ day, existing, onClose, onSaved }: { day: DaySchedule; 
   const any = Object.values(vals).some(Boolean);
 
   async function save() {
-    if (!any) { toast.error('Isi minimal satu waktu salat manual.'); return; }
+    if (!any) { toast.error('Isi minimal satu waktu sholat manual.'); return; }
     setSaving(true);
     try {
       await upsertPrayerOverride({
@@ -96,7 +96,7 @@ export default function PrayerPage() {
 
   return (
     <div>
-      <PageHeader icon={Clock4} title="Jadwal Salat" subtitle={`${formatDateLong(today)} · ${hijriDate(now, tz, settings.hijri_offset)}`}
+      <PageHeader icon={Clock4} title="Jadwal Sholat" subtitle={`${formatDateLong(today)} · ${hijriDate(now, tz, settings.hijri_offset)}`}
         actions={<AdminOnly>
           <button className="btn-outline" onClick={() => setShowHistory(true)}><History className="size-4" /> Riwayat Perubahan</button>
           <Link to="/pengaturan#jadwal" className="btn-primary"><Settings2 className="size-4" /> Metode & Koreksi</Link>
@@ -185,7 +185,7 @@ export default function PrayerPage() {
       </div>
 
       {editing && <OverrideModal day={editing} existing={overrides.find((o) => o.schedule_date === editing.date)} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); void ov.reload(true); }} />}
-      <Modal open={showHistory} onClose={() => setShowHistory(false)} title="Riwayat Perubahan Jadwal Salat" size="lg">
+      <Modal open={showHistory} onClose={() => setShowHistory(false)} title="Riwayat Perubahan Jadwal Sholat" size="lg">
         {showHistory && <AuditList table={['prayer_schedules', 'mosque_settings']} describe={(d) => d.schedule_date ? `Jadwal manual ${formatDateLong(String(d.schedule_date))}` : 'Pengaturan masjid / metode jadwal'} />}
       </Modal>
     </div>

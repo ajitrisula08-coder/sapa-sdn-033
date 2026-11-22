@@ -193,7 +193,7 @@ export default function FridayPage() {
 
   return (
     <div>
-      <PageHeader icon={Users} title="Salat Jumat" subtitle="Jadwal & petugas salat Jumat Masjid Darussalam"
+      <PageHeader icon={Users} title="Sholat Jumat" subtitle="Jadwal & petugas sholat Jumat Masjid Darussalam"
         actions={<>
           <Link to="/petugas-jumat" className="btn-gold"><Maximize className="size-4" /> Tampilan Besar Petugas</Link>
           <AdminOnly>

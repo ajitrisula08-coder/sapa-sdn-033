@@ -4,7 +4,7 @@ import { addDaysISO, parseISODate, todayISO } from './format';
 import type { MosqueSettings, PrayerOverride } from './types';
 
 /**
- * PERHITUNGAN JADWAL SALAT
+ * PERHITUNGAN JADWAL SHOLAT
  * ------------------------
  * Dihitung secara astronomis memakai pustaka "adhan" (https://github.com/batoulapps/adhan-js),
  * berdasarkan koordinat masjid, tanggal, dan metode yang dipilih di menu Pengaturan.

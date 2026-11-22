@@ -63,7 +63,7 @@ export default function TvPage() {
     } catch { /* browser TV tertentu tidak mendukung */ }
   }, []);
 
-  // Penanda "waktu salat telah tiba" selama 10 menit setelah masuk waktu.
+  // Penanda "waktu sholat telah tiba" selama 10 menit setelah masuk waktu.
   const arrived = useMemo(() => {
     for (const k of PRAYER_KEYS) {
       const diff = now.getTime() - status.today.times[k].getTime();
@@ -73,7 +73,7 @@ export default function TvPage() {
   }, [now, status]);
 
   const imsak = new Date(status.today.times.subuh.getTime() - 10 * 60_000);
-  const runningText = settings.tv_running_text?.trim() || anns.map((a) => `${a.title}: ${a.content.replace(/\s+/g, ' ').slice(0, 140)}`).join('   ✦   ') || `Selamat datang di ${settings.name}. Mari makmurkan masjid dengan salat berjamaah.`;
+  const runningText = settings.tv_running_text?.trim() || anns.map((a) => `${a.title}: ${a.content.replace(/\s+/g, ' ').slice(0, 140)}`).join('   ✦   ') || `Selamat datang di ${settings.name}. Mari makmurkan masjid dengan sholat berjamaah.`;
   const f = friday.data;
   const fridayRows: [string, string | undefined][] = f ? [['Imam', f.imam?.full_name], ['Khatib', f.khatib?.full_name], ['Bilal', f.bilal?.full_name], ['Muazin', f.muazin?.full_name]] : [];
 
@@ -113,18 +113,18 @@ export default function TvPage() {
 
         {/* Konten utama */}
         <div className="grid min-h-0 flex-1" style={{ gridTemplateColumns: '1.55fr 1fr', gridTemplateRows: 'minmax(0, 1fr)', gap: u(1.6), marginTop: u(1.6) }}>
-          {/* Kiri: salat berikutnya */}
+          {/* Kiri: sholat berikutnya */}
           <div className="relative flex flex-col justify-center overflow-hidden rounded-[2vw] bg-white/[0.06] ring-1 ring-white/12" style={{ padding: u(2.4) }}>
             <div className="pointer-events-none absolute -right-[6%] -top-[30%] aspect-square w-[60%] rounded-full border border-gold-400/15" />
             {arrived ? (
               <div className="relative text-center">
                 <p className="font-arabic text-gold-300" style={{ fontSize: u(4.5) }}>{PRAYER_ARABIC[arrived]}</p>
-                <p className="font-display font-bold" style={{ fontSize: u(5.2) }}>Waktu Salat {PRAYER_LABEL[arrived]} telah tiba</p>
+                <p className="font-display font-bold" style={{ fontSize: u(5.2) }}>Waktu Sholat {PRAYER_LABEL[arrived]} telah tiba</p>
                 <p className="text-emerald-50/80" style={{ fontSize: u(1.9), marginTop: u(0.8) }}>Luruskan dan rapatkan saf. Mohon nonaktifkan suara ponsel.</p>
               </div>
             ) : (
               <div className="relative">
-                <p className="font-semibold uppercase text-gold-300" style={{ fontSize: u(1.4), letterSpacing: '0.2em' }}>{ramadan ? 'Ramadan Mubarak · ' : ''}Menuju salat berikutnya</p>
+                <p className="font-semibold uppercase text-gold-300" style={{ fontSize: u(1.4), letterSpacing: '0.2em' }}>{ramadan ? 'Ramadan Mubarak · ' : ''}Menuju sholat berikutnya</p>
                 <div className="flex items-end justify-between" style={{ gap: u(2), marginTop: u(0.6) }}>
                   <div>
                     <p className="font-display font-bold leading-none" style={{ fontSize: u(7) }}>{PRAYER_LABEL[status.next.key]}</p>
@@ -217,7 +217,7 @@ export default function TvPage() {
           <div className="pointer-events-none absolute -bottom-[25%] -left-[8%] aspect-square w-[45%] animate-spin-slow rounded-full border-2 border-dashed border-gold-400/15 [animation-direction:reverse]" />
           <div className="relative flex flex-col" style={{ width: u(100), height: u(56.25), padding: u(2.5) }}>
             <div className="text-center">
-              <p className="animate-rise-in font-bold uppercase text-gold-300" style={{ fontSize: u(1.6), letterSpacing: '0.3em' }}>Petugas Salat Jumat</p>
+              <p className="animate-rise-in font-bold uppercase text-gold-300" style={{ fontSize: u(1.6), letterSpacing: '0.3em' }}>Petugas Sholat Jumat</p>
               <p className="animate-rise-in font-display font-bold [animation-delay:120ms]" style={{ fontSize: u(4.2) }}>{formatDateLong(f.friday_date)} · {hhmm(f.start_time)} WITA</p>
             </div>
             <div className="grid flex-1 grid-cols-2" style={{ gap: u(1.6), marginTop: u(1.6) }}>

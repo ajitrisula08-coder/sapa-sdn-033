@@ -110,7 +110,7 @@ export default function Layout() {
       <main className="mx-auto max-w-[1360px] px-4 pb-28 pt-5 sm:px-6 lg:px-8 lg:pb-12 lg:pt-8 print-full">
         {!isSupabaseConfigured && (
           <div className="no-print mb-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            <b>Mode pratinjau:</b> aplikasi belum terhubung ke database Supabase. Jadwal salat tetap dihitung otomatis,
+            <b>Mode pratinjau:</b> aplikasi belum terhubung ke database Supabase. Jadwal sholat tetap dihitung otomatis,
             tetapi data keuangan, Jumat, agenda, pengumuman, dan inventaris belum dapat ditampilkan.
             Lihat panduan di <code className="rounded bg-amber-100 px-1">README.md</code>.
           </div>

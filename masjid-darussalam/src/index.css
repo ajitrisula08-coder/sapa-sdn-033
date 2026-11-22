@@ -30,7 +30,7 @@
     to { transform: translateX(-50%); }
   }
 
-  /* Animasi menu Salat Jumat & Petugas Jumat */
+  /* Animasi menu Sholat Jumat & Petugas Jumat */
   --animate-rise-in: rise-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-shimmer: shimmer 3.2s ease-in-out infinite;
   --animate-float: float 6s ease-in-out infinite;

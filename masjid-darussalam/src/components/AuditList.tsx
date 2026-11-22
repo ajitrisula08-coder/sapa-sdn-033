@@ -6,7 +6,7 @@ import { formatDateTime } from '../lib/format';
 import { Badge, EmptyState, ErrorState, LoadingBlock } from './ui';
 
 const TABLE_LABEL: Record<string, string> = {
-  transactions: 'Transaksi', prayer_schedules: 'Jadwal salat manual', mosque_settings: 'Pengaturan masjid',
+  transactions: 'Transaksi', prayer_schedules: 'Jadwal sholat manual', mosque_settings: 'Pengaturan masjid',
   friday_schedules: 'Jadwal Jumat', friday_officers: 'Petugas Jumat', announcements: 'Pengumuman',
   activities: 'Agenda', inventories: 'Inventaris', transaction_categories: 'Kategori transaksi',
 };

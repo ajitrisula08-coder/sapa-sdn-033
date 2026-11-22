@@ -7,8 +7,8 @@ export interface NavItem { to: string; label: string; icon: LucideIcon; short?: 
 
 export const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, short: 'Beranda' },
-  { to: '/jadwal-salat', label: 'Jadwal Salat', icon: Clock4, short: 'Salat' },
-  { to: '/jumat', label: 'Salat Jumat', icon: Users, short: 'Jumat' },
+  { to: '/jadwal-salat', label: 'Jadwal Sholat', icon: Clock4, short: 'Sholat' },
+  { to: '/jumat', label: 'Sholat Jumat', icon: Users, short: 'Jumat' },
   { to: '/petugas-jumat', label: 'Petugas Jumat', icon: Mic },
   { to: '/keuangan', label: 'Keuangan Masjid', icon: Wallet, short: 'Kas' },
   { to: '/laporan', label: 'Laporan Keuangan', icon: FileBarChart },

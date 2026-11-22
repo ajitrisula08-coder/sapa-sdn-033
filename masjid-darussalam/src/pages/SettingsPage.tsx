@@ -137,7 +137,7 @@ function SettingsForm() {
         </label>
       </Section>
 
-      <Section id="jadwal" icon={Clock4} title="Lokasi & Jadwal Salat" desc="Koordinat masjid, metode perhitungan, dan koreksi menit setiap waktu salat."
+      <Section id="jadwal" icon={Clock4} title="Lokasi & Jadwal Sholat" desc="Koordinat masjid, metode perhitungan, dan koreksi menit setiap waktu sholat."
         saving={saving === 'prayer'} onSave={() => save('prayer', ['latitude', 'longitude', 'coordinates_verified', 'timezone', 'calc_method', 'madhab', 'adj_subuh', 'adj_terbit', 'adj_zuhur', 'adj_asar', 'adj_magrib', 'adj_isya', 'hijri_offset', 'friday_default_time'])}>
         {!f.coordinates_verified && (
           <p className="mb-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">Koordinat saat ini masih <b>perkiraan</b>. Buka Google Maps, tekan lama pada titik masjid, salin angka koordinatnya ke sini — atau tekan "Gunakan lokasi perangkat" saat berada di masjid.</p>
@@ -181,7 +181,7 @@ function SettingsForm() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="Koreksi tanggal Hijriah (hari)" hint="Sesuaikan dengan keputusan sidang isbat bila berbeda."><input type="number" min={-3} max={3} className="input" value={f.hijri_offset} onChange={(e) => set({ hijri_offset: Math.max(-3, Math.min(3, Math.round(Number(e.target.value) || 0))) })} /></Field>
-          <Field label="Jam salat Jumat bawaan"><input type="time" className="input" value={f.friday_default_time.slice(0, 5)} onChange={(e) => set({ friday_default_time: e.target.value })} /></Field>
+          <Field label="Jam sholat Jumat bawaan"><input type="time" className="input" value={f.friday_default_time.slice(0, 5)} onChange={(e) => set({ friday_default_time: e.target.value })} /></Field>
         </div>
       </Section>
 
@@ -227,7 +227,7 @@ function SettingsForm() {
 export default function SettingsPage() {
   return (
     <div>
-      <PageHeader icon={Settings} title="Pengaturan" subtitle="Identitas masjid, jadwal salat, saldo awal, layar TV, dan akun admin" />
+      <PageHeader icon={Settings} title="Pengaturan" subtitle="Identitas masjid, jadwal sholat, saldo awal, layar TV, dan akun admin" />
       <RequireAdmin><SettingsForm /></RequireAdmin>
     </div>
   );
