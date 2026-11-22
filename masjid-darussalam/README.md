@@ -32,6 +32,7 @@ Kerjakan **satu langkah per waktu**. Tidak perlu terburu-buru.
 1. Di Supabase, buka menu **SQL Editor** → **New query**.
 2. Buka file `supabase/migrations/20261122000001_skema_awal.sql`, salin **seluruh** isinya, tempel ke SQL Editor.
 3. Klik **Run**. Harus muncul "Success. No rows returned".
+4. Ulangi untuk file `supabase/migrations/20261122000002_kunci_fungsi_internal.sql`.
 
 ### Langkah 3 — Matikan pendaftaran publik
 1. Buka **Authentication → Sign In / Providers** (atau *Settings*).

@@ -94,3 +94,14 @@ Saldo akhir = Saldo awal + Total pemasukan aktif − Total pengeluaran aktif
 ```
 
 Transaksi berstatus `dibatalkan` tidak dihitung, tetapi tetap tersimpan.
+
+## Catatan pemeriksa keamanan Supabase (Security Advisor)
+
+Beberapa peringatan memang **disengaja**:
+- `security_definer_view` pada `public_transactions`: view ini sengaja memakai hak pemilik
+  agar jamaah bisa melihat transaksi aktif **tanpa** akses ke tabel `transactions`
+  (yang berisi nama donatur privat & bukti). Kolom yang ditampilkan sudah disaring.
+- `finance_summary`, `finance_monthly`, `finance_by_category`, `is_admin` dapat dipanggil publik:
+  hanya mengembalikan angka ringkasan / true-false, untuk transparansi kas.
+
+Fungsi trigger internal sudah dikunci oleh migration 2.
