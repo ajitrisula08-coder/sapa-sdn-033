@@ -30,6 +30,7 @@ export interface MosqueSettings {
   theme: import('./themes').ThemeId;
   theme_rotate: boolean;
   tv_friday_slide: boolean;
+  tv_daily_quotes: boolean;
   updated_at?: string;
 }
 

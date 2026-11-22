@@ -1,11 +1,12 @@
 import { TV_URL } from '../components/nav';
-import { Building2, Check, Clock4, History, KeyRound, Landmark, LocateFixed, MonitorPlay, Palette, Save, Settings, Shuffle } from 'lucide-react';
+import { BookOpenText, Building2, Check, Clock4, History, KeyRound, Landmark, LocateFixed, MonitorPlay, Palette, Save, Settings, Shuffle } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { RequireAdmin } from '../components/AdminGate';
 import { AuditList } from '../components/AuditList';
 import { Field, PageHeader, useConfirm } from '../components/ui';
 import { setPreviewTheme, useSettings } from '../context/SettingsContext';
 import { activeTheme, THEMES } from '../lib/themes';
+import { NASIHAT, nasihatHariIni } from '../lib/nasihat';
 import { useToast } from '../context/ToastContext';
 import { friendlyError, updateSettings } from '../lib/api';
 import { ALL_TIME_KEYS, CALC_METHODS, PRAYER_LABEL, TIMEZONE_LABEL } from '../lib/constants';
@@ -198,11 +199,26 @@ function SettingsForm() {
       </Section>
 
       <Section id="tv" icon={MonitorPlay} title="Layar TV Masjid" desc="Teks berjalan dan mode Ramadan pada halaman /tv."
-        saving={saving === 'tv'} onSave={() => save('tv', ['tv_running_text', 'ramadan_mode', 'tv_friday_slide'])}>
+        saving={saving === 'tv'} onSave={() => save('tv', ['tv_running_text', 'ramadan_mode', 'tv_friday_slide', 'tv_daily_quotes'])}>
         <div className="space-y-4">
-          <Field label="Teks berjalan (opsional)" hint="Maks. 500 karakter. Jika kosong, judul pengumuman terbaru yang ditampilkan.">
+          <Field label="Teks berjalan (opsional)" hint="Maks. 500 karakter. Tampil paling awal di teks berjalan. Jika kosong, pengumuman terbaru ikut ditampilkan.">
             <textarea className="input min-h-20" maxLength={500} value={f.tv_running_text ?? ''} onChange={(e) => set({ tv_running_text: e.target.value || null })} />
           </Field>
+          <div className="rounded-2xl border border-slate-200 p-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+              <input type="checkbox" className="size-4 accent-emerald-700" checked={f.tv_daily_quotes} onChange={(e) => set({ tv_daily_quotes: e.target.checked })} />
+              <BookOpenText className="size-4 text-emerald-700" /> Tampilkan nasihat harian dari Al-Qur'an & hadis (beserta sumbernya) di teks berjalan
+            </label>
+            <p className="mt-1 pl-6 text-xs text-slate-500">{NASIHAT.length} nasihat, {nasihatHariIni().length} berbeda setiap hari, berganti otomatis tengah malam WITA.</p>
+            <p className="mb-1 mt-3 pl-6 text-xs font-semibold uppercase tracking-wider text-slate-400">Nasihat hari ini</p>
+            <ul className="space-y-2 pl-6">
+              {nasihatHariIni().map((n) => (
+                <li key={n.sumber} className="rounded-xl bg-emerald-50/60 p-3 text-sm text-slate-700">
+                  “{n.teks}” <span className="font-semibold text-emerald-800">({n.sumber})</span>
+                </li>
+              ))}
+            </ul>
+          </div>
           <label className="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" className="size-4 accent-emerald-700" checked={f.tv_friday_slide} onChange={(e) => set({ tv_friday_slide: e.target.checked })} /> Tampilkan slide petugas Jumat layar penuh (Kamis–Jumat, 15 detik setiap menit)</label>
           <label className="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" className="size-4 accent-emerald-700" checked={f.ramadan_mode} onChange={(e) => set({ ramadan_mode: e.target.checked })} /> Aktifkan Mode Ramadan di layar TV (menampilkan waktu imsak & berbuka)</label>
           <a href={TV_URL} target="_blank" rel="noreferrer" className="btn-gold"><MonitorPlay className="size-4" /> Buka layar TV</a>

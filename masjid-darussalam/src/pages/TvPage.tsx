@@ -9,6 +9,7 @@ import { useQuery } from '../hooks/useQuery';
 import { getAnnouncements, getFinanceSummary, getNextFriday } from '../lib/api';
 import { ANNOUNCEMENT_CATEGORY, PRAYER_ARABIC, PRAYER_KEYS, PRAYER_LABEL } from '../lib/constants';
 import { addDaysISO, formatClock, formatCountdown, formatDateLong, hhmm, hijriDate, hijriMonth, rupiah, todayISO } from '../lib/format';
+import { formatNasihat, nasihatHariIni } from '../lib/nasihat';
 import { formatPrayerTime, zonedTime } from '../lib/prayer';
 import { isSupabaseConfigured } from '../lib/supabase';
 
@@ -73,7 +74,16 @@ export default function TvPage() {
   }, [now, status]);
 
   const imsak = new Date(status.today.times.subuh.getTime() - 10 * 60_000);
-  const runningText = settings.tv_running_text?.trim() || anns.map((a) => `${a.title}: ${a.content.replace(/\s+/g, ' ').slice(0, 140)}`).join('   ✦   ') || `Selamat datang di ${settings.name}. Mari makmurkan masjid dengan sholat berjamaah.`;
+  // Teks berjalan: teks dari admin (jika ada) → nasihat harian Al-Qur'an & hadis → pengumuman.
+  const custom = settings.tv_running_text?.trim();
+  const runningParts = [
+    ...(custom ? [custom] : []),
+    ...(settings.tv_daily_quotes ? nasihatHariIni(now).map(formatNasihat) : []),
+    ...(!custom ? anns.map((a) => `${a.title}: ${a.content.replace(/\s+/g, ' ').slice(0, 140)}`) : []),
+  ];
+  const runningText = runningParts.join('   ✦   ') || `Selamat datang di ${settings.name}. Mari makmurkan masjid dengan sholat berjamaah.`;
+  // Kecepatan tetap nyaman dibaca berapa pun panjang teksnya (±8 huruf per detik).
+  const marqueeSeconds = Math.max(25, Math.round(runningText.length * 0.13));
   const f = friday.data;
   const fridayRows: [string, string | undefined][] = f ? [['Imam', f.imam?.full_name], ['Khatib', f.khatib?.full_name], ['Bilal', f.bilal?.full_name]] : [];
 
@@ -201,7 +211,7 @@ export default function TvPage() {
         <div className="flex items-center overflow-hidden rounded-full bg-black/20 ring-1 ring-white/10" style={{ marginTop: u(1.2), height: u(3) }}>
           <span className="shrink-0 rounded-full bg-gold-400 font-bold text-emerald-950" style={{ fontSize: u(1.1), padding: `${u(0.5)} ${u(1.2)}`, marginLeft: u(0.25) }}>INFO</span>
           <div className="min-w-0 flex-1 overflow-hidden">
-            <div className="flex w-max animate-marquee whitespace-nowrap" style={{ fontSize: u(1.35) }}>
+            <div className="flex w-max animate-marquee whitespace-nowrap" style={{ fontSize: u(1.35), animationDuration: `${marqueeSeconds}s` }}>
               <span style={{ paddingRight: u(6), paddingLeft: u(2) }}>{runningText}</span>
               <span style={{ paddingRight: u(6), paddingLeft: u(2) }} aria-hidden>{runningText}</span>
             </div>
