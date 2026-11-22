@@ -18,7 +18,7 @@ export function LogoMark({ className = 'size-11', style }: { className?: string;
   return (
     <svg viewBox="0 0 64 64" className={`${className} shrink-0`} style={style} role="img" aria-label="Logo Masjid Darussalam">
       <defs>
-        <linearGradient id={bg} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#059669" /><stop offset="1" stopColor="#064e3b" /></linearGradient>
+        <linearGradient id={bg} x1="0" y1="0" x2="1" y2="1"><stop offset="0" style={{ stopColor: 'var(--color-emerald-600)' }} /><stop offset="1" style={{ stopColor: 'var(--color-emerald-900)' }} /></linearGradient>
         <linearGradient id={au} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#f8e6b0" /><stop offset="1" stopColor="#c9a227" /></linearGradient>
       </defs>
       <rect width="64" height="64" rx="16" fill={`url(#${bg})`} />
@@ -27,7 +27,7 @@ export function LogoMark({ className = 'size-11', style }: { className?: string;
       <rect x="31.3" y="11" width="1.4" height="6" fill={`url(#${au})`} />
       <circle cx="32" cy="10.5" r="1.6" fill={`url(#${au})`} />
       <rect x="19" y="32" width="26" height="16" rx="1.5" fill="#fff" opacity=".95" />
-      <path d="M28 48v-7a4 4 0 0 1 8 0v7Z" fill="#065f46" />
+      <path d="M28 48v-7a4 4 0 0 1 8 0v7Z" style={{ fill: 'var(--color-emerald-800)' }} />
       <rect x="13" y="24" width="3.4" height="24" rx="1" fill={`url(#${au})`} />
       <rect x="47.6" y="24" width="3.4" height="24" rx="1" fill={`url(#${au})`} />
       <path d="M12.6 24 14.7 19l2.1 5Zm34.6 0 2.1-5 2.1 5Z" fill={`url(#${au})`} />

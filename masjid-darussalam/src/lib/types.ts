@@ -27,6 +27,9 @@ export interface MosqueSettings {
   friday_default_time: string;
   ramadan_mode: boolean;
   tv_running_text: string | null;
+  theme: import('./themes').ThemeId;
+  theme_rotate: boolean;
+  tv_friday_slide: boolean;
   updated_at?: string;
 }
 

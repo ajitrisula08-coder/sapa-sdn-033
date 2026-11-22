@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 
 const PrayerPage = lazy(() => import('./pages/PrayerPage'));
 const FridayPage = lazy(() => import('./pages/FridayPage'));
+const FridayOfficersPage = lazy(() => import('./pages/FridayOfficersPage'));
 const FinancePage = lazy(() => import('./pages/FinancePage'));
 const ReportPage = lazy(() => import('./pages/ReportPage'));
 const ActivitiesPage = lazy(() => import('./pages/ActivitiesPage'));
@@ -43,6 +44,7 @@ export default function App() {
                   <Route index element={<Dashboard />} />
                   <Route path="jadwal-salat" element={<PrayerPage />} />
                   <Route path="jumat" element={<FridayPage />} />
+                  <Route path="petugas-jumat" element={<FridayOfficersPage />} />
                   <Route path="keuangan" element={<FinancePage />} />
                   <Route path="laporan" element={<ReportPage />} />
                   <Route path="agenda" element={<ActivitiesPage />} />

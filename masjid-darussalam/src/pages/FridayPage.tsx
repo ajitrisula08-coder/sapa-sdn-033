@@ -1,4 +1,5 @@
-import { BookOpen, CalendarPlus, History, Pencil, Plus, Trash2, UserPlus, Users } from 'lucide-react';
+import { BookOpen, CalendarPlus, History, Maximize, Pencil, Plus, Trash2, UserPlus, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { AdminOnly } from '../components/AdminGate';
 import { Badge, EmptyState, ErrorState, Field, LoadingBlock, Modal, PageHeader, useConfirm } from '../components/ui';
@@ -123,8 +124,9 @@ function OfficerModal({ initial, onClose }: { initial: Partial<FridayOfficer>; o
 function ScheduleCard({ s, onEdit, onDelete, highlight }: { s: FridaySchedule; onEdit?: () => void; onDelete?: () => void; highlight?: boolean }) {
   const rows: [string, string | undefined][] = [['Imam', s.imam?.full_name], ['Khatib', s.khatib?.full_name], ['Bilal', s.bilal?.full_name], ['Muazin', s.muazin?.full_name]];
   return (
-    <div className={`relative overflow-hidden rounded-2xl p-5 ${highlight ? 'bg-islamic text-white shadow-lift' : 'card'}`}>
+    <div className={`relative overflow-hidden rounded-2xl p-5 transition duration-300 hover:-translate-y-1 hover:shadow-lift ${highlight ? 'bg-islamic text-white shadow-lift sm:p-7' : 'card'}`}>
       {highlight && <div className="pattern-overlay pointer-events-none absolute inset-0 opacity-10" />}
+      {highlight && <div className="pointer-events-none absolute -right-16 -top-16 size-56 animate-spin-slow rounded-full border border-dashed border-gold-400/30" />}
       <div className="relative flex items-start justify-between gap-3">
         <div>
           {highlight && <p className="mb-1 text-xs font-bold uppercase tracking-[0.18em] text-gold-300">Jumat berikutnya</p>}
@@ -139,10 +141,10 @@ function ScheduleCard({ s, onEdit, onDelete, highlight }: { s: FridaySchedule; o
         )}
       </div>
       <dl className="relative mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-        {rows.map(([role, name]) => (
-          <div key={role} className={`rounded-xl p-3 ${highlight ? 'bg-white/8 ring-1 ring-white/10' : 'bg-slate-50'}`}>
+        {rows.map(([role, name], i) => (
+          <div key={role} style={{ animationDelay: `${150 + i * 120}ms` }} className={`animate-rise-in rounded-xl p-3 ${highlight ? 'bg-white/8 ring-1 ring-white/10 sm:p-4' : 'bg-slate-50'}`}>
             <dt className={`text-[11px] font-semibold uppercase tracking-wider ${highlight ? 'text-gold-300' : 'text-slate-400'}`}>{role}</dt>
-            <dd className={`text-sm font-semibold ${name ? '' : 'italic opacity-60'}`}>{name ?? 'Belum ditentukan'}</dd>
+            <dd className={`font-semibold leading-tight ${highlight ? 'font-display text-2xl sm:text-3xl' : 'text-sm'} ${name ? (highlight ? 'gold-shimmer' : '') : 'italic opacity-60'}`}>{name ?? 'Belum ditentukan'}</dd>
           </div>
         ))}
       </dl>
@@ -192,19 +194,23 @@ export default function FridayPage() {
   return (
     <div>
       <PageHeader icon={Users} title="Salat Jumat" subtitle="Jadwal & petugas salat Jumat Masjid Darussalam"
-        actions={<AdminOnly>
+        actions={<>
+          <Link to="/petugas-jumat" className="btn-gold"><Maximize className="size-4" /> Tampilan Besar Petugas</Link>
+          <AdminOnly>
           <button className="btn-outline" onClick={() => setEditOfficer({})}><UserPlus className="size-4" /> Tambah Petugas</button>
           <button className="btn-primary" onClick={newSchedule}><Plus className="size-4" /> Tambah Jadwal</button>
-        </AdminOnly>} />
+          </AdminOnly>
+        </>} />
 
       <div className="mb-5 flex gap-1 overflow-x-auto rounded-2xl bg-white p-1.5 shadow-soft ring-1 ring-emerald-900/5">
         {tabs.map(({ id, label, icon: Icon }) => (
-          <button key={id} onClick={() => setTab(id)} className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${tab === id ? 'bg-emerald-700 text-white shadow' : 'text-slate-600 hover:bg-emerald-50'}`}>
+          <button key={id} onClick={() => setTab(id)} className={`flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition duration-300 ${tab === id ? 'bg-emerald-700 text-white shadow' : 'text-slate-600 hover:bg-emerald-50'}`}>
             <Icon className="size-4" /> {label}
           </button>
         ))}
       </div>
 
+      <div key={tab} className="animate-fade-up">
       {!isSupabaseConfigured ? <div className="card"><EmptyState title="Belum terhubung ke database" /></div> : tab === 'upcoming' ? (
         upcoming.loading ? <LoadingBlock /> : upcoming.error ? <ErrorState message={upcoming.error} onRetry={() => upcoming.reload()} />
           : !upcoming.data?.length ? (
@@ -213,7 +219,7 @@ export default function FridayPage() {
           ) : (
             <div className="grid gap-4 lg:grid-cols-2">
               {upcoming.data.map((s, i) => (
-                <div key={s.id} className={i === 0 ? 'lg:col-span-2' : ''}>
+                <div key={s.id} style={{ animationDelay: `${i * 110}ms` }} className={`animate-rise-in ${i === 0 ? 'lg:col-span-2' : ''}`}>
                   <ScheduleCard s={s} highlight={i === 0}
                     onEdit={isAdmin ? () => setEditSched(s) : undefined} onDelete={isAdmin ? () => removeSchedule(s) : undefined} />
                 </div>
@@ -251,8 +257,8 @@ export default function FridayPage() {
               action={isAdmin ? <button className="btn-primary" onClick={() => setEditOfficer({})}><UserPlus className="size-4" /> Tambah Petugas</button> : undefined} /></div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {stats.data.map((o) => (
-                <div key={o.id} className={`card p-4 ${o.is_active ? '' : 'opacity-60'}`}>
+              {stats.data.map((o, i) => (
+                <div key={o.id} style={{ animationDelay: `${Math.min(i, 12) * 60}ms` }} className={`card animate-rise-in p-4 transition hover:-translate-y-0.5 hover:shadow-lift ${o.is_active ? '' : 'opacity-60'}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-semibold text-slate-800">{o.full_name}</p>
@@ -276,6 +282,8 @@ export default function FridayPage() {
             </div>
           )
       )}
+
+      </div>
 
       {editSched && <ScheduleModal initial={editSched} officers={officers.data ?? []} onClose={() => setEditSched(null)} />}
       {editOfficer && <OfficerModal initial={editOfficer} onClose={() => setEditOfficer(null)} />}

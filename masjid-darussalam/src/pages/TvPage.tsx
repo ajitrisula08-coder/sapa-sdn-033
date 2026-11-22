@@ -1,4 +1,4 @@
-import { ArrowLeft, Landmark, Maximize, Megaphone, Minimize, Moon, Users } from 'lucide-react';
+import { ArrowLeft, BellRing, BookOpen, Landmark, Maximize, Megaphone, Mic, Minimize, Moon, Star, Users, Volume2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { LogoMark } from '../components/Logo';
@@ -7,8 +7,8 @@ import { usePrayerStatus } from '../hooks/usePrayerStatus';
 import { useQuery } from '../hooks/useQuery';
 import { getAnnouncements, getFinanceSummary, getNextFriday } from '../lib/api';
 import { ANNOUNCEMENT_CATEGORY, PRAYER_ARABIC, PRAYER_KEYS, PRAYER_LABEL } from '../lib/constants';
-import { formatClock, formatCountdown, formatDateLong, hhmm, hijriDate, hijriMonth, rupiah, todayISO } from '../lib/format';
-import { formatPrayerTime } from '../lib/prayer';
+import { addDaysISO, formatClock, formatCountdown, formatDateLong, hhmm, hijriDate, hijriMonth, rupiah, todayISO } from '../lib/format';
+import { formatPrayerTime, zonedTime } from '../lib/prayer';
 import { isSupabaseConfigured } from '../lib/supabase';
 
 /** Satuan responsif 16:9: 1u = 1% lebar layar 16:9 yang muat di jendela. */
@@ -75,6 +75,17 @@ export default function TvPage() {
   const runningText = settings.tv_running_text?.trim() || anns.map((a) => `${a.title}: ${a.content.replace(/\s+/g, ' ').slice(0, 140)}`).join('   ✦   ') || `Selamat datang di ${settings.name}. Mari makmurkan masjid dengan salat berjamaah.`;
   const f = friday.data;
   const fridayRows: [string, string | undefined][] = f ? [['Imam', f.imam?.full_name], ['Khatib', f.khatib?.full_name], ['Bilal', f.bilal?.full_name], ['Muazin', f.muazin?.full_name]] : [];
+
+  // Slide petugas Jumat layar penuh: Kamis & Jumat (s.d. 90 menit setelah Jumat dimulai),
+  // tampil 15 detik di akhir setiap menit. ?slide=jumat untuk memaksa tampil (uji coba).
+  const fridayWindow = !!f && (f.friday_date === addDaysISO(today, 1)
+    || (f.friday_date === today && now.getTime() < zonedTime(f.friday_date, hhmm(f.start_time), tz).getTime() + 90 * 60_000));
+  const showFridaySlide = !arrived && !!f && (params.get('slide') === 'jumat'
+    || (settings.tv_friday_slide && fridayWindow && now.getSeconds() >= 45));
+  const SLIDE_ROLES = [
+    { key: 'imam', label: 'Imam', icon: Star }, { key: 'khatib', label: 'Khatib', icon: Mic },
+    { key: 'bilal', label: 'Bilal', icon: BellRing }, { key: 'muazin', label: 'Muazin', icon: Volume2 },
+  ] as const;
 
   const style = { '--u': 'min(1vw, 1.7778vh)' } as CSSProperties;
 
@@ -197,8 +208,43 @@ export default function TvPage() {
         </div>
       </div>
 
+      {/* Slide petugas Jumat */}
+      {showFridaySlide && f && (
+        <div className="bg-islamic absolute inset-0 z-20 grid place-items-center animate-fade-up" style={style}>
+          <div className="pattern-overlay pointer-events-none absolute inset-0 opacity-[0.08]" />
+          <div className="pointer-events-none absolute -right-[8%] -top-[20%] aspect-square w-[40%] animate-spin-slow rounded-full border-2 border-dashed border-gold-400/20" />
+          <div className="pointer-events-none absolute -bottom-[25%] -left-[8%] aspect-square w-[45%] animate-spin-slow rounded-full border-2 border-dashed border-gold-400/15 [animation-direction:reverse]" />
+          <div className="relative flex flex-col" style={{ width: u(100), height: u(56.25), padding: u(2.5) }}>
+            <div className="text-center">
+              <p className="animate-rise-in font-bold uppercase text-gold-300" style={{ fontSize: u(1.6), letterSpacing: '0.3em' }}>Petugas Salat Jumat</p>
+              <p className="animate-rise-in font-display font-bold [animation-delay:120ms]" style={{ fontSize: u(4.2) }}>{formatDateLong(f.friday_date)} · {hhmm(f.start_time)} WITA</p>
+            </div>
+            <div className="grid flex-1 grid-cols-2" style={{ gap: u(1.6), marginTop: u(1.6) }}>
+              {SLIDE_ROLES.map((r, i) => {
+                const name = (f[r.key] as { full_name: string } | null | undefined)?.full_name;
+                const Icon = r.icon;
+                return (
+                  <div key={r.key} className="flex animate-rise-in flex-col justify-center overflow-hidden rounded-[1.6vw] bg-white/[0.07] ring-1 ring-white/15"
+                    style={{ padding: `${u(1.4)} ${u(2.2)}`, animationDelay: `${250 + i * 160}ms` }}>
+                    <span className="inline-flex w-fit items-center rounded-full bg-gold-400 font-bold uppercase text-slate-900" style={{ gap: u(0.5), padding: `${u(0.35)} ${u(1)}`, fontSize: u(1.4), letterSpacing: '0.1em' }}>
+                      <Icon style={{ width: u(1.5), height: u(1.5) }} /> {r.label}
+                    </span>
+                    <p className={`font-display font-bold leading-[1.05] ${name ? 'gold-shimmer' : 'italic text-white/45'}`} style={{ fontSize: u(name && name.length > 22 ? 4.2 : 5.4), marginTop: u(0.6) }}>{name ?? 'Belum ditentukan'}</p>
+                  </div>
+                );
+              })}
+            </div>
+            {f.sermon_theme && (
+              <p className="flex animate-rise-in items-center justify-center text-center font-semibold [animation-delay:950ms]" style={{ fontSize: u(1.9), marginTop: u(1.4), gap: u(0.6) }}>
+                <BookOpen className="text-gold-300" style={{ width: u(2), height: u(2) }} /> Tema khutbah: <i className="text-gold-300">“{f.sermon_theme}”</i>
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Kontrol (muncul saat mouse/sentuh) */}
-      <div className={`absolute right-4 top-4 flex cursor-auto gap-2 transition-opacity duration-500 ${showControls ? 'opacity-100' : 'pointer-events-none opacity-0'}`}>
+      <div className={`absolute right-4 top-4 z-30 flex cursor-auto gap-2 transition-opacity duration-500 ${showControls ? 'opacity-100' : 'pointer-events-none opacity-0'}`}>
         <Link to="/" className="flex items-center gap-1.5 rounded-xl bg-black/40 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/60"><ArrowLeft className="size-4" /> Aplikasi</Link>
         <div className="flex overflow-hidden rounded-xl bg-black/40 text-sm font-semibold backdrop-blur">
           {([['normal', 'Normal'], ['ramadan', 'Ramadan']] as const).map(([m, l]) => (

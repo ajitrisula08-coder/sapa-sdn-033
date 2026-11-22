@@ -1,5 +1,5 @@
 import {
-  Boxes, CalendarClock, CalendarDays, Clock4, FileBarChart, LayoutDashboard, LogIn, Megaphone,
+  Boxes, CalendarClock, CalendarDays, Clock4, FileBarChart, LayoutDashboard, LogIn, Megaphone, Mic,
   Settings, Users, Wallet, type LucideIcon,
 } from 'lucide-react';
 
@@ -9,6 +9,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, short: 'Beranda' },
   { to: '/jadwal-salat', label: 'Jadwal Salat', icon: Clock4, short: 'Salat' },
   { to: '/jumat', label: 'Salat Jumat', icon: Users, short: 'Jumat' },
+  { to: '/petugas-jumat', label: 'Petugas Jumat', icon: Mic },
   { to: '/keuangan', label: 'Keuangan Masjid', icon: Wallet, short: 'Kas' },
   { to: '/laporan', label: 'Laporan Keuangan', icon: FileBarChart },
   { to: '/agenda', label: 'Agenda Kegiatan', icon: CalendarDays, short: 'Agenda' },

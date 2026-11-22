@@ -1,10 +1,11 @@
 import { TV_URL } from '../components/nav';
-import { Building2, Clock4, History, KeyRound, Landmark, LocateFixed, MonitorPlay, Save, Settings } from 'lucide-react';
+import { Building2, Check, Clock4, History, KeyRound, Landmark, LocateFixed, MonitorPlay, Palette, Save, Settings, Shuffle } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { RequireAdmin } from '../components/AdminGate';
 import { AuditList } from '../components/AuditList';
 import { Field, PageHeader, useConfirm } from '../components/ui';
-import { useSettings } from '../context/SettingsContext';
+import { setPreviewTheme, useSettings } from '../context/SettingsContext';
+import { activeTheme, THEMES } from '../lib/themes';
 import { useToast } from '../context/ToastContext';
 import { friendlyError, updateSettings } from '../lib/api';
 import { ALL_TIME_KEYS, CALC_METHODS, PRAYER_LABEL, TIMEZONE_LABEL } from '../lib/constants';
@@ -41,6 +42,9 @@ function SettingsForm() {
   const [saving, setSaving] = useState<string | null>(null);
   const [pw, setPw] = useState({ a: '', b: '' });
   useEffect(() => { setF(settings); }, [settings]);
+  // Pratinjau tema langsung saat dipilih; dibatalkan bila meninggalkan halaman tanpa menyimpan.
+  useEffect(() => { setPreviewTheme(f.theme_rotate ? activeTheme(f) : f.theme); }, [f.theme, f.theme_rotate]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => setPreviewTheme(null), []);
   const set = (patch: Partial<MosqueSettings>) => setF((x) => ({ ...x, ...patch }));
 
   async function save(section: string, keys: (keyof MosqueSettings)[]) {
@@ -105,6 +109,34 @@ function SettingsForm() {
         </div>
       </Section>
 
+      <Section id="tema" icon={Palette} title="Tema Tampilan" desc="Warna aplikasi dan layar TV. Pilih tema untuk melihat pratinjau, lalu klik Simpan."
+        saving={saving === 'theme'} onSave={() => save('theme', ['theme', 'theme_rotate'])}>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {THEMES.map((t) => {
+            const on = f.theme === t.id && !f.theme_rotate;
+            return (
+              <button type="button" key={t.id} onClick={() => set({ theme: t.id, theme_rotate: false })}
+                className={`group relative overflow-hidden rounded-2xl text-left ring-2 transition hover:-translate-y-0.5 hover:shadow-lift ${on ? 'ring-gold-500' : 'ring-slate-200'}`}>
+                <div className="relative h-20" style={{ background: `linear-gradient(135deg, ${t.swatch[0]}, ${t.swatch[1]})` }}>
+                  <div className="pattern-overlay absolute inset-0 opacity-20" />
+                  <span className="absolute bottom-2 right-3 size-6 rounded-full ring-2 ring-white/60" style={{ background: t.swatch[2] }} />
+                  {on && <span className="absolute left-3 top-3 grid size-7 animate-pop place-items-center rounded-full bg-gold-400 text-slate-900"><Check className="size-4" /></span>}
+                </div>
+                <div className="bg-white p-3">
+                  <p className="font-semibold text-slate-800">{t.label}</p>
+                  <p className="text-xs text-slate-500">{t.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <label className="mt-4 flex items-start gap-3 rounded-2xl border border-slate-200 p-4 text-sm text-slate-700">
+          <input type="checkbox" className="mt-0.5 size-4 accent-emerald-700" checked={f.theme_rotate} onChange={(e) => set({ theme_rotate: e.target.checked })} />
+          <span><b className="inline-flex items-center gap-1"><Shuffle className="size-4" /> Ganti tema otomatis setiap hari</b><br />
+            <span className="text-slate-500">Tema berganti bergiliran setiap hari agar tampilan (terutama layar TV) tidak membosankan. Hari ini: <b>{THEMES.find((t) => t.id === activeTheme({ theme: f.theme, theme_rotate: true }))?.label}</b>.</span></span>
+        </label>
+      </Section>
+
       <Section id="jadwal" icon={Clock4} title="Lokasi & Jadwal Salat" desc="Koordinat masjid, metode perhitungan, dan koreksi menit setiap waktu salat."
         saving={saving === 'prayer'} onSave={() => save('prayer', ['latitude', 'longitude', 'coordinates_verified', 'timezone', 'calc_method', 'madhab', 'adj_subuh', 'adj_terbit', 'adj_zuhur', 'adj_asar', 'adj_magrib', 'adj_isya', 'hijri_offset', 'friday_default_time'])}>
         {!f.coordinates_verified && (
@@ -166,11 +198,12 @@ function SettingsForm() {
       </Section>
 
       <Section id="tv" icon={MonitorPlay} title="Layar TV Masjid" desc="Teks berjalan dan mode Ramadan pada halaman /tv."
-        saving={saving === 'tv'} onSave={() => save('tv', ['tv_running_text', 'ramadan_mode'])}>
+        saving={saving === 'tv'} onSave={() => save('tv', ['tv_running_text', 'ramadan_mode', 'tv_friday_slide'])}>
         <div className="space-y-4">
           <Field label="Teks berjalan (opsional)" hint="Maks. 500 karakter. Jika kosong, judul pengumuman terbaru yang ditampilkan.">
             <textarea className="input min-h-20" maxLength={500} value={f.tv_running_text ?? ''} onChange={(e) => set({ tv_running_text: e.target.value || null })} />
           </Field>
+          <label className="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" className="size-4 accent-emerald-700" checked={f.tv_friday_slide} onChange={(e) => set({ tv_friday_slide: e.target.checked })} /> Tampilkan slide petugas Jumat layar penuh (Kamis–Jumat, 15 detik setiap menit)</label>
           <label className="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" className="size-4 accent-emerald-700" checked={f.ramadan_mode} onChange={(e) => set({ ramadan_mode: e.target.checked })} /> Aktifkan Mode Ramadan di layar TV (menampilkan waktu imsak & berbuka)</label>
           <a href={TV_URL} target="_blank" rel="noreferrer" className="btn-gold"><MonitorPlay className="size-4" /> Buka layar TV</a>
         </div>

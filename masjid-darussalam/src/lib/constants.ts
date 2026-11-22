@@ -38,6 +38,9 @@ export const DEFAULT_SETTINGS: MosqueSettings = {
   friday_default_time: '12:00',
   ramadan_mode: false,
   tv_running_text: null,
+  theme: 'zamrud',
+  theme_rotate: false,
+  tv_friday_slide: true,
 };
 
 export const CALC_METHODS: Record<CalcMethod, { label: string; detail: string }> = {

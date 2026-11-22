@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./themes.css";
 
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
@@ -6,7 +7,6 @@
   --font-arabic: "Amiri", "Traditional Arabic", serif;
 
   --color-emerald-950: #022c22;
-  --color-forest: #053b2c;
   --color-cream-50: #fffdf7;
   --color-cream-100: #fbf6ea;
   --color-cream-200: #f3ead3;
@@ -16,8 +16,8 @@
   --color-gold-600: #a8841a;
   --color-gold-700: #7d6213;
 
-  --shadow-soft: 0 1px 2px rgb(6 78 59 / 0.04), 0 8px 24px -8px rgb(6 78 59 / 0.12);
-  --shadow-lift: 0 2px 4px rgb(6 78 59 / 0.06), 0 18px 40px -12px rgb(6 78 59 / 0.22);
+  --shadow-soft: 0 1px 2px color-mix(in oklab, var(--color-emerald-900) 4%, transparent), 0 8px 24px -8px color-mix(in oklab, var(--color-emerald-900) 12%, transparent);
+  --shadow-lift: 0 2px 4px color-mix(in oklab, var(--color-emerald-900) 6%, transparent), 0 18px 40px -12px color-mix(in oklab, var(--color-emerald-900) 22%, transparent);
 
   --animate-fade-up: fade-up 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-marquee: marquee 40s linear infinite;
@@ -28,6 +28,34 @@
   @keyframes marquee {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
+  }
+
+  /* Animasi menu Salat Jumat & Petugas Jumat */
+  --animate-rise-in: rise-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-shimmer: shimmer 3.2s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 60s linear infinite;
+  --animate-glow: glow 2.8s ease-in-out infinite;
+  --animate-pop: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(28px) scale(0.97); filter: blur(4px); }
+    to { opacity: 1; transform: none; filter: none; }
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 200% 50%; }
+    50% { background-position: 0% 50%; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-gold-400) 45%, transparent); }
+    50% { box-shadow: 0 0 0 10px transparent; }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: none; }
   }
 }
 
@@ -40,6 +68,9 @@
   input, select, textarea, button { font: inherit; }
   .font-display { font-variant-numeric: lining-nums; }
   :focus-visible { outline: 2px solid var(--color-gold-500); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
 }
 
 @utility card {
@@ -63,11 +94,19 @@
 @utility tabular { font-variant-numeric: tabular-nums lining-nums; }
 
 @utility bg-islamic {
-  background-color: var(--color-forest);
+  background-color: var(--color-emerald-900);
   background-image:
-    radial-gradient(1200px 500px at 85% -10%, rgb(16 185 129 / 0.35), transparent 60%),
+    radial-gradient(1200px 500px at 85% -10%, color-mix(in oklab, var(--color-emerald-500) 35%, transparent), transparent 60%),
     radial-gradient(800px 400px at -10% 110%, rgb(201 162 39 / 0.18), transparent 60%),
-    linear-gradient(160deg, #065f46 0%, #053b2c 55%, #022c22 100%);
+    linear-gradient(160deg, var(--color-emerald-800) 0%, color-mix(in oklab, var(--color-emerald-900) 70%, var(--color-emerald-950)) 55%, var(--color-emerald-950) 100%);
+  transition: background-color 0.6s;
+}
+/* Teks emas berkilau bergerak (nama petugas Jumat) */
+@utility gold-shimmer {
+  background: linear-gradient(100deg, #e2bd5c 0%, #fff4cf 22%, #e2bd5c 40%, #c9a227 60%, #f8e6b0 80%, #e2bd5c 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: var(--animate-shimmer);
 }
 @utility pattern-overlay {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23e2bd5c' stroke-width='1'%3E%3Cpath d='M40 8l9.4 22.6L72 40l-22.6 9.4L40 72l-9.4-22.6L8 40l22.6-9.4z'/%3E%3Cpath d='M40 18l15.6 6.4L62 40l-6.4 15.6L40 62l-15.6-6.4L18 40l6.4-15.6z'/%3E%3Ccircle cx='40' cy='40' r='6'/%3E%3Cpath d='M0 0l8 8M80 0l-8 8M0 80l8-8M80 80l-8-8'/%3E%3C/g%3E%3C/svg%3E");
