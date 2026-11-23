@@ -58,3 +58,7 @@ python3 make_video.py --preview preview.png
 python3 make_video.py
 python3 make_video.py --voice narasi.mp3   # isi VOICE_SPANS dulu
 ```
+
+## Versi dengan narasi
+
+`bekantan_shorts_narasi.mp4` (±54 detik) memakai narasi ElevenLabs suara "Bagas" (`narasi_bagas.mp3`). Jika narasi dibuat dengan paket **Free**, video ini **hanya untuk uji coba, tidak boleh dimonetisasi**.

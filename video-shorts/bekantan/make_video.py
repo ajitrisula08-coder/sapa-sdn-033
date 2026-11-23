@@ -31,7 +31,12 @@ SCENES = [
     ("end", "Menurutmu, hidung bekantan itu lucu atau keren? Tulis di komentar, dan follow [Kok Bisa] Kaltim!"),
 ]
 
-VOICE_SPANS = None
+# Waktu bicara tiap kalimat (detik) pada narasi ElevenLabs "Bagas" (narasi_bagas.mp3),
+# diukur dari jeda/hening di file audio (ffmpeg silencedetect).
+VOICE_SPANS = [
+    (0.00, 4.41), (4.81, 9.31), (9.70, 12.07), (12.44, 17.49), (17.82, 18.41), (18.77, 24.48),
+    (24.75, 26.75), (27.08, 30.27), (30.58, 33.91), (34.26, 40.53), (40.88, 45.43), (45.83, 51.64),
+]
 
 # ----------------------------------------------------------------- warna --
 FUR = hexc("#d9692a")
