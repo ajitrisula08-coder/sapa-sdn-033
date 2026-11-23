@@ -40,7 +40,14 @@ SCENES = [
     ("cta", "Mau tahu [Kok Bisa] lainnya? Follow ya!"),
 ]
 
-VOICE_SPANS = None
+# Waktu bicara tiap kalimat (detik) pada narasi ElevenLabs "Bagas" (narasi_bagas.mp3),
+# diukur dari jeda/hening di file audio (ffmpeg silencedetect).
+VOICE_SPANS = [
+    (0.12, 2.53), (2.92, 4.98), (5.53, 8.57), (9.00, 12.52), (12.92, 15.48),
+    (15.85, 20.03), (20.41, 23.50), (23.88, 25.93), (26.32, 29.90), (30.23, 33.02),
+    (33.37, 35.81), (36.11, 38.67), (39.16, 41.96), (42.33, 44.97), (45.30, 49.40),
+    (49.80, 54.29), (54.66, 59.21), (59.60, 61.60),
+]
 
 # ----------------------------------------------------------------- warna --
 PESUT = hexc("#8a9bab")
