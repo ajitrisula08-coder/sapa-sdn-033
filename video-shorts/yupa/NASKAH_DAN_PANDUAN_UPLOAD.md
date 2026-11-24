@@ -59,3 +59,7 @@ Catatan: gambar aksara di video hanya ilustrasi.
 https://www.youtube.com/@kokbisakaltim?sub_confirmation=1
 
 #shorts #kokbisa #prasastiyupa #kerajaankutai #mulawarman #sejarahindonesia #kalimantantimur #kutaikartanegara #faktaunik #edukasi
+
+## Versi dengan narasi
+
+`yupa_shorts_narasi.mp4` (±63 detik) memakai narasi ElevenLabs suara "Bagas" (`narasi_bagas.mp3`). Jika narasi dibuat dengan paket **Free**, video ini hanya untuk uji coba, tidak boleh dimonetisasi.

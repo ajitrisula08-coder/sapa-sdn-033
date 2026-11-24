@@ -32,7 +32,12 @@ SCENES = [
     ("end", "Pernah lihat prasasti Yupa langsung? Ceritakan di komentar, dan follow [Kok Bisa] Kaltim!"),
 ]
 
-VOICE_SPANS = None
+# Waktu bicara tiap kalimat (detik) pada narasi ElevenLabs "Bagas" (narasi_bagas.mp3),
+# diukur dari jeda/hening di file audio (ffmpeg silencedetect).
+VOICE_SPANS = [
+    (0.00, 5.00), (5.52, 10.77), (11.20, 17.19), (17.65, 21.00), (21.39, 24.95), (25.36, 30.49),
+    (30.84, 35.10), (35.55, 42.12), (42.54, 45.61), (46.01, 49.33), (49.68, 55.45), (55.82, 60.63),
+]
 
 # ----------------------------------------------------------------- warna --
 STONE = hexc("#a39e94")
