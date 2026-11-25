@@ -18,3 +18,14 @@ Folder ini berisi generator video Shorts seri "Kok Bisa?" (mesin bersama: `kokbi
 2. Pemilik membuat narasi (ElevenLabs, suara "Bagas", Multilingual v2) → kirim MP3.
 3. Ukur jeda kalimat (`ffmpeg -af silencedetect=noise=-35dB:d=0.12`), isi `VOICE_SPANS`, render `--voice narasi_bagas.mp3`.
 4. Kirim video + judul/deskripsi/hashtag di chat, commit, push.
+
+## Standar video baru (mulai episode Gambut, hasil evaluasi 25 Nov 2026)
+
+Dokumen lengkap: "Evaluasi Konten & Standar Baru – KOK BISA? KALTIM" (Claude Docs).
+- Durasi 35–45 detik (±100–110 kata), ganti adegan tiap 2–3 detik.
+- Kalimat pertama ≤ 8 kata, langsung kejutan; jangan dibuka dengan nama tempat.
+- Teks hook besar sudah tampil di frame 0; objek utama close-up.
+- Zona aman 1080×1920: teks di y 1.000–1.250 px, lebar maks 820 px, jauhi 180 px kanan dan 560 px terbawah; jangan taruh apa pun di 200 px teratas.
+- Visual utama: gambar AI (Google Flow, dibuat pemilik) + gerak kamera tegas, kabut, kilau air; 1 klip video Flow untuk hook bila kredit cukup. 2D hanya untuk diagram.
+- Penutup: frame judul besar 1 detik (untuk sampul) + kata "subscribe" + pertanyaan komentar.
+- Judul YouTube pakai pola "Alasan…/Rahasia…/Kok Bisa…" + 1 emoji.
