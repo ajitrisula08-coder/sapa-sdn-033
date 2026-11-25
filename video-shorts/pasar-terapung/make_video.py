@@ -52,7 +52,12 @@ SHOTS = {
     "s11": (1, "out", "", ""),
 }
 
-VOICE_SPANS = None
+# Waktu bicara tiap kalimat (detik) pada narasi ElevenLabs "Bagas" (narasi_bagas.mp3),
+# diukur dari jeda/hening di file audio (ffmpeg silencedetect).
+VOICE_SPANS = [
+    (0.00, 4.35), (4.84, 8.47), (9.03, 13.42), (13.88, 19.12), (19.54, 25.60), (26.03, 31.46),
+    (31.89, 37.02), (37.45, 42.22), (42.65, 48.29), (48.63, 52.90), (53.35, 58.16),
+]
 
 # --------------------------------------------------------------- gambar --
 _cache = {}
