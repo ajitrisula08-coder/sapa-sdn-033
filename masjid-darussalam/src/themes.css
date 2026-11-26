@@ -1,0 +1,67 @@
+/* Tema warna. Setiap tema mengganti palet "emerald" yang dipakai seluruh aplikasi. */
+/* Dibuat otomatis — lihat src/lib/themes.ts untuk daftar tema. */
+:root[data-theme="malam"] {
+  --color-emerald-50: oklch(97% 0.014 254.604);
+  --color-emerald-100: oklch(93.2% 0.032 255.585);
+  --color-emerald-200: oklch(88.2% 0.059 254.128);
+  --color-emerald-300: oklch(80.9% 0.105 251.813);
+  --color-emerald-400: oklch(70.7% 0.165 254.624);
+  --color-emerald-500: oklch(62.3% 0.214 259.815);
+  --color-emerald-600: oklch(54.6% 0.245 262.881);
+  --color-emerald-700: oklch(48.8% 0.243 264.376);
+  --color-emerald-800: oklch(42.4% 0.199 265.638);
+  --color-emerald-900: oklch(37.9% 0.146 265.522);
+  --color-emerald-950: #0b1630;
+}
+:root[data-theme="marun"] {
+  --color-emerald-50: oklch(96.9% 0.015 12.422);
+  --color-emerald-100: oklch(94.1% 0.03 12.58);
+  --color-emerald-200: oklch(89.2% 0.058 10.001);
+  --color-emerald-300: oklch(81% 0.117 11.638);
+  --color-emerald-400: oklch(71.2% 0.194 13.428);
+  --color-emerald-500: oklch(64.5% 0.246 16.439);
+  --color-emerald-600: oklch(58.6% 0.253 17.585);
+  --color-emerald-700: oklch(51.4% 0.222 16.935);
+  --color-emerald-800: oklch(45.5% 0.188 13.697);
+  --color-emerald-900: oklch(41% 0.159 10.272);
+  --color-emerald-950: #3b0716;
+}
+:root[data-theme="toska"] {
+  --color-emerald-50: oklch(98.4% 0.014 180.72);
+  --color-emerald-100: oklch(95.3% 0.051 180.801);
+  --color-emerald-200: oklch(91% 0.096 180.426);
+  --color-emerald-300: oklch(85.5% 0.138 181.071);
+  --color-emerald-400: oklch(77.7% 0.152 181.912);
+  --color-emerald-500: oklch(70.4% 0.14 182.503);
+  --color-emerald-600: oklch(60% 0.118 184.704);
+  --color-emerald-700: oklch(51.1% 0.096 186.391);
+  --color-emerald-800: oklch(43.7% 0.078 188.216);
+  --color-emerald-900: oklch(38.6% 0.063 188.416);
+  --color-emerald-950: #032a2a;
+}
+:root[data-theme="ungu"] {
+  --color-emerald-50: oklch(97.7% 0.014 308.299);
+  --color-emerald-100: oklch(94.6% 0.033 307.174);
+  --color-emerald-200: oklch(90.2% 0.063 306.703);
+  --color-emerald-300: oklch(82.7% 0.119 306.383);
+  --color-emerald-400: oklch(71.4% 0.203 305.504);
+  --color-emerald-500: oklch(62.7% 0.265 303.9);
+  --color-emerald-600: oklch(55.8% 0.288 302.321);
+  --color-emerald-700: oklch(49.6% 0.265 301.924);
+  --color-emerald-800: oklch(43.8% 0.218 303.724);
+  --color-emerald-900: oklch(38.1% 0.176 304.987);
+  --color-emerald-950: #2a0a3f;
+}
+:root[data-theme="coklat"] {
+  --color-emerald-50: #fbf7f3;
+  --color-emerald-100: #f3e8dc;
+  --color-emerald-200: #e6cfb7;
+  --color-emerald-300: #d4ae8a;
+  --color-emerald-400: #c08a5e;
+  --color-emerald-500: #a96f43;
+  --color-emerald-600: #8e5934;
+  --color-emerald-700: #73462b;
+  --color-emerald-800: #5c3824;
+  --color-emerald-900: #4a2e1f;
+  --color-emerald-950: #2a180f;
+}

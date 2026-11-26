@@ -1,0 +1,255 @@
+import { TV_URL } from '../components/nav';
+import { BookOpenText, Building2, MessageCircle, Check, Clock4, History, KeyRound, Landmark, LocateFixed, MonitorPlay, Palette, Save, Settings, Shuffle } from 'lucide-react';
+import { useEffect, useState, type ReactNode } from 'react';
+import { RequireAdmin } from '../components/AdminGate';
+import { AuditList } from '../components/AuditList';
+import { WaAutoSettings } from '../components/WaAutoSettings';
+import { Field, PageHeader, useConfirm } from '../components/ui';
+import { setPreviewTheme, useSettings } from '../context/SettingsContext';
+import { activeTheme, THEMES } from '../lib/themes';
+import { NASIHAT, nasihatHariIni } from '../lib/nasihat';
+import { useToast } from '../context/ToastContext';
+import { friendlyError, updateSettings } from '../lib/api';
+import { ALL_TIME_KEYS, CALC_METHODS, PRAYER_LABEL, TIMEZONE_LABEL } from '../lib/constants';
+import { emitDataChanged } from '../lib/events';
+import { formatDate, rupiah, todayISO } from '../lib/format';
+import { computeDay, formatPrayerTime } from '../lib/prayer';
+import { supabase } from '../lib/supabase';
+import type { CalcMethod, MosqueSettings } from '../lib/types';
+
+function Section({ id, icon: Icon, title, desc, children, onSave, saving }: {
+  id: string; icon: React.ComponentType<{ className?: string }>; title: string; desc: string; children: ReactNode; onSave?: () => void; saving?: boolean;
+}) {
+  return (
+    <section id={id} className="card scroll-mt-24 p-5 sm:p-6">
+      <div className="mb-5 flex items-start gap-3">
+        <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><Icon className="size-5" /></div>
+        <div><h2 className="font-display text-xl font-bold text-emerald-950">{title}</h2><p className="text-sm text-slate-500">{desc}</p></div>
+      </div>
+      {children}
+      {onSave && (
+        <div className="mt-5 flex justify-end border-t border-slate-100 pt-4">
+          <button className="btn-primary" disabled={saving} onClick={onSave}><Save className="size-4" /> {saving ? 'Menyimpan…' : 'Simpan'}</button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function SettingsForm() {
+  const { settings, reload } = useSettings();
+  const toast = useToast();
+  const confirm = useConfirm();
+  const [f, setF] = useState<MosqueSettings>(settings);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [pw, setPw] = useState({ a: '', b: '' });
+  useEffect(() => { setF(settings); }, [settings]);
+  // Pratinjau tema langsung saat dipilih; dibatalkan bila meninggalkan halaman tanpa menyimpan.
+  useEffect(() => { setPreviewTheme(f.theme_rotate ? activeTheme(f) : f.theme); }, [f.theme, f.theme_rotate]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => setPreviewTheme(null), []);
+  const set = (patch: Partial<MosqueSettings>) => setF((x) => ({ ...x, ...patch }));
+
+  async function save(section: string, keys: (keyof MosqueSettings)[]) {
+    const patch = Object.fromEntries(keys.map((k) => [k, f[k]])) as Partial<MosqueSettings>;
+    setSaving(section);
+    try {
+      await updateSettings(patch);
+      toast.success('Pengaturan berhasil disimpan.');
+      emitDataChanged('settings', 'finance');
+      reload();
+    } catch (e) { toast.error(friendlyError(e)); } finally { setSaving(null); }
+  }
+
+  function useMyLocation() {
+    if (!navigator.geolocation) { toast.error('Perangkat ini tidak mendukung lokasi.'); return; }
+    toast.info('Mengambil lokasi perangkat… Pastikan Anda berada di masjid.');
+    navigator.geolocation.getCurrentPosition(
+      (p) => { set({ latitude: Number(p.coords.latitude.toFixed(6)), longitude: Number(p.coords.longitude.toFixed(6)) }); toast.success(`Lokasi didapat (akurasi ±${Math.round(p.coords.accuracy)} m). Klik Simpan.`); },
+      () => toast.error('Gagal mengambil lokasi. Izinkan akses lokasi di browser.'),
+      { enableHighAccuracy: true, timeout: 15000 },
+    );
+  }
+
+  async function saveFinance() {
+    if (!(f.opening_balance >= 0)) { toast.error('Saldo awal tidak boleh negatif.'); return; }
+    const r = await confirm({
+      title: 'Ubah saldo awal kas?',
+      message: <p>Saldo awal akan diatur menjadi <b>{rupiah(f.opening_balance)}</b>{f.opening_balance_date ? <> per <b>{formatDate(f.opening_balance_date)}</b></> : ''}. Seluruh saldo berjalan akan dihitung ulang. Perubahan ini tercatat di riwayat audit.</p>,
+      confirmLabel: 'Ya, simpan saldo awal',
+    });
+    if (r.ok) await save('finance', ['opening_balance', 'opening_balance_date']);
+  }
+
+  async function changePassword() {
+    if (pw.a.length < 8) { toast.error('Kata sandi minimal 8 karakter.'); return; }
+    if (pw.a !== pw.b) { toast.error('Konfirmasi kata sandi tidak sama.'); return; }
+    setSaving('pw');
+    try {
+      const { error } = await supabase.auth.updateUser({ password: pw.a });
+      if (error) throw error;
+      setPw({ a: '', b: '' });
+      toast.success('Kata sandi berhasil diganti.');
+    } catch (e) { toast.error(friendlyError(e)); } finally { setSaving(null); }
+  }
+
+  const preview = computeDay(todayISO(f.timezone), f, null);
+
+  return (
+    <div className="space-y-6">
+      <Section id="identitas" icon={Building2} title="Identitas Masjid" desc="Nama, alamat, dan logo yang tampil di seluruh aplikasi dan layar TV."
+        saving={saving === 'id'} onSave={() => save('id', ['name', 'subtitle', 'address', 'district', 'regency', 'province', 'logo_url'])}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Nama masjid" required><input className="input" value={f.name} onChange={(e) => set({ name: e.target.value })} /></Field>
+          <Field label="Subjudul"><input className="input" value={f.subtitle} onChange={(e) => set({ subtitle: e.target.value })} /></Field>
+          <Field label="Desa / alamat"><input className="input" value={f.address} onChange={(e) => set({ address: e.target.value })} /></Field>
+          <Field label="Kecamatan"><input className="input" value={f.district} onChange={(e) => set({ district: e.target.value })} /></Field>
+          <Field label="Kabupaten"><input className="input" value={f.regency} onChange={(e) => set({ regency: e.target.value })} /></Field>
+          <Field label="Provinsi"><input className="input" value={f.province} onChange={(e) => set({ province: e.target.value })} /></Field>
+          <Field label="URL logo resmi (opsional)" className="sm:col-span-2" hint="Kosongkan untuk memakai logo sementara. Harus diawali https:// atau / (file di folder public).">
+            <input className="input" value={f.logo_url ?? ''} onChange={(e) => set({ logo_url: e.target.value.trim() || null })} placeholder="https://… atau /logo-resmi.png" />
+          </Field>
+        </div>
+      </Section>
+
+      <Section id="tema" icon={Palette} title="Tema Tampilan" desc="Warna aplikasi dan layar TV. Pilih tema untuk melihat pratinjau, lalu klik Simpan."
+        saving={saving === 'theme'} onSave={() => save('theme', ['theme', 'theme_rotate'])}>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {THEMES.map((t) => {
+            const on = f.theme === t.id && !f.theme_rotate;
+            return (
+              <button type="button" key={t.id} onClick={() => set({ theme: t.id, theme_rotate: false })}
+                className={`group relative overflow-hidden rounded-2xl text-left ring-2 transition hover:-translate-y-0.5 hover:shadow-lift ${on ? 'ring-gold-500' : 'ring-slate-200'}`}>
+                <div className="relative h-20" style={{ background: `linear-gradient(135deg, ${t.swatch[0]}, ${t.swatch[1]})` }}>
+                  <div className="pattern-overlay absolute inset-0 opacity-20" />
+                  <span className="absolute bottom-2 right-3 size-6 rounded-full ring-2 ring-white/60" style={{ background: t.swatch[2] }} />
+                  {on && <span className="absolute left-3 top-3 grid size-7 animate-pop place-items-center rounded-full bg-gold-400 text-slate-900"><Check className="size-4" /></span>}
+                </div>
+                <div className="bg-white p-3">
+                  <p className="font-semibold text-slate-800">{t.label}</p>
+                  <p className="text-xs text-slate-500">{t.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <label className="mt-4 flex items-start gap-3 rounded-2xl border border-slate-200 p-4 text-sm text-slate-700">
+          <input type="checkbox" className="mt-0.5 size-4 accent-emerald-700" checked={f.theme_rotate} onChange={(e) => set({ theme_rotate: e.target.checked })} />
+          <span><b className="inline-flex items-center gap-1"><Shuffle className="size-4" /> Ganti tema otomatis setiap hari</b><br />
+            <span className="text-slate-500">Tema berganti bergiliran setiap hari agar tampilan (terutama layar TV) tidak membosankan. Hari ini: <b>{THEMES.find((t) => t.id === activeTheme({ theme: f.theme, theme_rotate: true }))?.label}</b>.</span></span>
+        </label>
+      </Section>
+
+      <Section id="jadwal" icon={Clock4} title="Lokasi & Jadwal Sholat" desc="Koordinat masjid, metode perhitungan, dan koreksi menit setiap waktu sholat."
+        saving={saving === 'prayer'} onSave={() => save('prayer', ['latitude', 'longitude', 'coordinates_verified', 'timezone', 'calc_method', 'madhab', 'adj_subuh', 'adj_terbit', 'adj_zuhur', 'adj_asar', 'adj_magrib', 'adj_isya', 'hijri_offset', 'friday_default_time'])}>
+        {!f.coordinates_verified && (
+          <p className="mb-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">Koordinat saat ini masih <b>perkiraan</b>. Buka Google Maps, tekan lama pada titik masjid, salin angka koordinatnya ke sini — atau tekan "Gunakan lokasi perangkat" saat berada di masjid.</p>
+        )}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Field label="Lintang (latitude)" required hint="Contoh: -0.063600"><input type="number" step="0.000001" className="input tabular" value={f.latitude} onChange={(e) => set({ latitude: Number(e.target.value) })} /></Field>
+          <Field label="Bujur (longitude)" required hint="Contoh: 116.861400"><input type="number" step="0.000001" className="input tabular" value={f.longitude} onChange={(e) => set({ longitude: Number(e.target.value) })} /></Field>
+          <div className="flex flex-col justify-center gap-2 lg:col-span-2">
+            <button type="button" className="btn-outline" onClick={useMyLocation}><LocateFixed className="size-4" /> Gunakan lokasi perangkat</button>
+            <label className="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" className="size-4 accent-emerald-700" checked={f.coordinates_verified} onChange={(e) => set({ coordinates_verified: e.target.checked })} /> Koordinat sudah diperiksa dan sesuai lokasi masjid</label>
+          </div>
+          <Field label="Zona waktu" required>
+            <select className="input" value={f.timezone} onChange={(e) => set({ timezone: e.target.value as MosqueSettings['timezone'] })}>
+              {Object.entries(TIMEZONE_LABEL).map(([k, v]) => <option key={k} value={k}>{k} — {v}</option>)}
+            </select>
+          </Field>
+          <Field label="Metode perhitungan" required className="lg:col-span-2" hint={CALC_METHODS[f.calc_method].detail}>
+            <select className="input" value={f.calc_method} onChange={(e) => set({ calc_method: e.target.value as CalcMethod })}>
+              {Object.entries(CALC_METHODS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+            </select>
+          </Field>
+          <Field label="Mazhab waktu Asar">
+            <select className="input" value={f.madhab} onChange={(e) => set({ madhab: e.target.value as MosqueSettings['madhab'] })}>
+              <option value="SYAFII">Syafi'i (umum di Indonesia)</option><option value="HANAFI">Hanafi</option>
+            </select>
+          </Field>
+        </div>
+        {f.timezone !== 'Asia/Makassar' && <p className="mt-3 text-sm text-rose-700">Perhatian: Desa Teratak berada di zona WITA (Asia/Makassar).</p>}
+        <h3 className="mb-2 mt-6 text-sm font-bold uppercase tracking-wider text-slate-500">Koreksi menit (− / +)</h3>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {ALL_TIME_KEYS.map((k) => {
+            const key = `adj_${k}` as const;
+            return (
+              <div key={k} className="rounded-xl border border-slate-100 p-3">
+                <p className="text-sm font-semibold text-slate-700">{PRAYER_LABEL[k]}</p>
+                <input type="number" min={-30} max={30} className="input mt-1 tabular" value={f[key]} onChange={(e) => set({ [key]: Math.max(-30, Math.min(30, Math.round(Number(e.target.value) || 0))) } as Partial<MosqueSettings>)} aria-label={`Koreksi ${PRAYER_LABEL[k]}`} />
+                <p className="mt-1 text-xs text-slate-500">Hasil: <b className="tabular">{formatPrayerTime(preview.times[k], f.timezone)}</b></p>
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Field label="Koreksi tanggal Hijriah (hari)" hint="Sesuaikan dengan keputusan sidang isbat bila berbeda."><input type="number" min={-3} max={3} className="input" value={f.hijri_offset} onChange={(e) => set({ hijri_offset: Math.max(-3, Math.min(3, Math.round(Number(e.target.value) || 0))) })} /></Field>
+          <Field label="Jam sholat Jumat bawaan"><input type="time" className="input" value={f.friday_default_time.slice(0, 5)} onChange={(e) => set({ friday_default_time: e.target.value })} /></Field>
+        </div>
+      </Section>
+
+      <Section id="keuangan" icon={Landmark} title="Saldo Awal Kas" desc="Saldo kas nyata pada saat aplikasi mulai digunakan. Bukan data contoh."
+        saving={saving === 'finance'} onSave={saveFinance}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Saldo awal (Rp)" required hint={rupiah(f.opening_balance)}>
+            <input inputMode="numeric" className="input tabular text-lg font-semibold" value={f.opening_balance ? Math.round(f.opening_balance).toLocaleString('id-ID') : '0'} onChange={(e) => set({ opening_balance: Number(e.target.value.replace(/\D/g, '')) || 0 })} />
+          </Field>
+          <Field label="Per tanggal" hint="Transaksi sebelum tanggal ini tidak dapat dicatat.">
+            <input type="date" className="input" max={todayISO()} value={f.opening_balance_date ?? ''} onChange={(e) => set({ opening_balance_date: e.target.value || null })} />
+          </Field>
+        </div>
+      </Section>
+
+      <Section id="tv" icon={MonitorPlay} title="Layar TV Masjid" desc="Teks berjalan dan mode Ramadan pada halaman /tv."
+        saving={saving === 'tv'} onSave={() => save('tv', ['tv_running_text', 'ramadan_mode', 'tv_friday_slide', 'tv_daily_quotes'])}>
+        <div className="space-y-4">
+          <Field label="Teks berjalan (opsional)" hint="Maks. 500 karakter. Tampil paling awal di teks berjalan. Jika kosong, pengumuman terbaru ikut ditampilkan.">
+            <textarea className="input min-h-20" maxLength={500} value={f.tv_running_text ?? ''} onChange={(e) => set({ tv_running_text: e.target.value || null })} />
+          </Field>
+          <div className="rounded-2xl border border-slate-200 p-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+              <input type="checkbox" className="size-4 accent-emerald-700" checked={f.tv_daily_quotes} onChange={(e) => set({ tv_daily_quotes: e.target.checked })} />
+              <BookOpenText className="size-4 text-emerald-700" /> Tampilkan nasihat harian dari Al-Qur'an & hadis (beserta sumbernya) di teks berjalan
+            </label>
+            <p className="mt-1 pl-6 text-xs text-slate-500">{NASIHAT.length} nasihat, {nasihatHariIni().length} berbeda setiap hari, berganti otomatis tengah malam WITA.</p>
+            <p className="mb-1 mt-3 pl-6 text-xs font-semibold uppercase tracking-wider text-slate-400">Nasihat hari ini</p>
+            <ul className="space-y-2 pl-6">
+              {nasihatHariIni().map((n) => (
+                <li key={n.sumber} className="rounded-xl bg-emerald-50/60 p-3 text-sm text-slate-700">
+                  “{n.teks}” <span className="font-semibold text-emerald-800">({n.sumber})</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <label className="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" className="size-4 accent-emerald-700" checked={f.tv_friday_slide} onChange={(e) => set({ tv_friday_slide: e.target.checked })} /> Tampilkan slide petugas Jumat layar penuh (Kamis–Jumat, 15 detik setiap menit)</label>
+          <label className="flex items-center gap-2 text-sm font-medium text-slate-700"><input type="checkbox" className="size-4 accent-emerald-700" checked={f.ramadan_mode} onChange={(e) => set({ ramadan_mode: e.target.checked })} /> Aktifkan Mode Ramadan di layar TV (menampilkan waktu imsak & berbuka)</label>
+          <a href={TV_URL} target="_blank" rel="noreferrer" className="btn-gold"><MonitorPlay className="size-4" /> Buka layar TV</a>
+        </div>
+      </Section>
+
+      <Section id="whatsapp" icon={MessageCircle} title="Pengingat WhatsApp Otomatis" desc="Kirim pengingat tugas ke petugas Jumat secara otomatis setiap Kamis melalui layanan Fonnte.">
+        <WaAutoSettings />
+      </Section>
+
+      <Section id="akun" icon={KeyRound} title="Akun Administrator" desc="Ganti kata sandi login admin. Pendaftaran admin baru tidak tersedia untuk publik.">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Field label="Kata sandi baru"><input type="password" autoComplete="new-password" className="input" value={pw.a} onChange={(e) => setPw({ ...pw, a: e.target.value })} /></Field>
+          <Field label="Ulangi kata sandi baru"><input type="password" autoComplete="new-password" className="input" value={pw.b} onChange={(e) => setPw({ ...pw, b: e.target.value })} /></Field>
+          <div className="flex items-end"><button className="btn-primary w-full" disabled={saving === 'pw'} onClick={changePassword}><KeyRound className="size-4" /> Ganti Kata Sandi</button></div>
+        </div>
+      </Section>
+
+      <Section id="audit" icon={History} title="Riwayat Aktivitas (Audit Log)" desc="50 perubahan data terakhir di seluruh sistem.">
+        <AuditList limit={50} />
+      </Section>
+    </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <div>
+      <PageHeader icon={Settings} title="Pengaturan" subtitle="Identitas masjid, jadwal sholat, saldo awal, layar TV, dan akun admin" />
+      <RequireAdmin><SettingsForm /></RequireAdmin>
+    </div>
+  );
+}
