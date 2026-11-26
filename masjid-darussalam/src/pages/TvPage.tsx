@@ -9,9 +9,18 @@ import { useQuery } from '../hooks/useQuery';
 import { getAnnouncements, getFinanceSummary, getNextFriday } from '../lib/api';
 import { ANNOUNCEMENT_CATEGORY, PRAYER_ARABIC, PRAYER_KEYS, PRAYER_LABEL } from '../lib/constants';
 import { addDaysISO, formatClock, formatCountdown, formatDateLong, hhmm, hijriDate, hijriMonth, rupiah, todayISO } from '../lib/format';
+import { clockOffsetMs, isClockSynced } from '../lib/clock';
 import { formatNasihat, nasihatHariIni } from '../lib/nasihat';
 import { formatPrayerTime, zonedTime } from '../lib/prayer';
 import { isSupabaseConfigured } from '../lib/supabase';
+
+/** "3 hari", "2 jam", atau "5 menit" — untuk tanda jam perangkat yang salah. */
+function selisihTeks(ms: number) {
+  const m = Math.round(Math.abs(ms) / 60_000);
+  if (m >= 1440) return `± ${Math.round(m / 1440).toLocaleString('id-ID')} hari`;
+  if (m >= 60) return `± ${Math.round(m / 60)} jam`;
+  return `± ${m} menit`;
+}
 
 /** Satuan responsif 16:9: 1u = 1% lebar layar 16:9 yang muat di jendela. */
 const u = (n: number) => `calc(var(--u) * ${n})`;
@@ -258,6 +267,11 @@ export default function TvPage() {
 
       {/* Kontrol (muncul saat mouse/sentuh) */}
       <div className={`absolute right-4 top-4 z-30 flex cursor-auto gap-2 transition-opacity duration-500 ${showControls ? 'opacity-100' : 'pointer-events-none opacity-0'}`}>
+        {isClockSynced() && Math.abs(clockOffsetMs()) > 120_000 && (
+          <span className="flex items-center rounded-xl bg-amber-400/90 px-3 py-2 text-xs font-semibold text-slate-900" title="Jam perangkat berbeda dari jam server; aplikasi memakai jam server.">
+            Jam TV box salah {selisihTeks(clockOffsetMs())} · sudah dikoreksi otomatis
+          </span>
+        )}
         <Link to="/" className="flex items-center gap-1.5 rounded-xl bg-black/40 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/60"><ArrowLeft className="size-4" /> Aplikasi</Link>
         <div className="flex overflow-hidden rounded-xl bg-black/40 text-sm font-semibold backdrop-blur">
           {([['normal', 'Normal'], ['ramadan', 'Ramadan']] as const).map(([m, l]) => (

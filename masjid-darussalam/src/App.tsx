@@ -5,6 +5,7 @@ import { ConfirmProvider, LoadingBlock } from './components/ui';
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { ToastProvider } from './context/ToastContext';
+import { startClockSync } from './lib/clock';
 import { startRealtime } from './lib/events';
 import Dashboard from './pages/Dashboard';
 
@@ -31,7 +32,7 @@ function NotFound() {
 }
 
 export default function App() {
-  useEffect(() => { startRealtime(); }, []);
+  useEffect(() => { startRealtime(); startClockSync(); }, []);
   return (
     <ToastProvider>
       <AuthProvider>

@@ -1,3 +1,4 @@
+import { nowMs } from './clock';
 import { HIJRI_MONTHS } from './constants';
 
 export const APP_TZ = 'Asia/Makassar';
@@ -25,7 +26,7 @@ export function ymdInTz(date: Date, tz: string = APP_TZ): { y: number; m: number
 }
 
 /** "YYYY-MM-DD" untuk hari ini (atau tanggal tertentu) di zona waktu masjid. */
-export function todayISO(tz: string = APP_TZ, date: Date = new Date()): string {
+export function todayISO(tz: string = APP_TZ, date: Date = new Date(nowMs())): string {
   const { y, m, d } = ymdInTz(date, tz);
   return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
