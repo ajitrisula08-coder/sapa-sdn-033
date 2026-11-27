@@ -917,7 +917,13 @@ def sc_cta(ctx, lt, d, t):
 
 
 class Episode:
-    def __init__(self, number, scenes, scene_fns, out, voice_spans=None, music_key=0):
+    def __init__(self, number, scenes, scene_fns, out, voice_spans=None, music_key=0,
+                 style="v1", title_card=None):
+        """style "v2" = standar baru (subtitle zona aman, tanpa lencana atas, vignet,
+        frame judul penutup). title_card = (baris1, baris2) untuk frame judul/sampul."""
+        self.style = style
+        self.title_card = title_card
+        self.card_dur = 1.4 if (style == "v2" and title_card) else 0.0
         self.number = number
         self.scenes = scenes
         self.fns = dict(scene_fns)
@@ -932,13 +938,14 @@ class Episode:
             ch = chunk_words(tokens(line))
             weights = [sum(len(w) + 2 for w, _ in c) + 4 for c in ch]
             avail = d - 0.55
-            times, acc = [], 0.15
+            times, acc = [], (0.0 if style == "v2" else 0.15)
             for wgt in weights:
                 times.append(acc)
                 acc += avail * wgt / sum(weights)
             self.timeline.append(dict(name=name, line=line, start=t, dur=d, chunks=ch, ctimes=times))
             t += d
-        self.total = t
+        self.main_total = t
+        self.total = t + self.card_dur
 
     def retime_to_voice(self, spans):
         """Samakan durasi adegan & munculnya subtitle dengan narasi.
@@ -948,7 +955,7 @@ class Episode:
         for i, sc in enumerate(self.timeline):
             s0, e0 = spans[i]
             sc["start"] = starts[i]
-            sc["dur"] = (starts[i + 1] if i + 1 < len(starts) else e0 + 2.6) - starts[i]
+            sc["dur"] = (starts[i + 1] if i + 1 < len(starts) else e0 + (1.0 if self.style == "v2" else 2.6)) - starts[i]
             lens = [sum(len(w) + 1 for w, _ in c) for c in sc["chunks"]]
             tot = sum(lens)
             acc, times = 0, []
@@ -956,7 +963,8 @@ class Episode:
                 times.append(max(0.0, s0 + (e0 - s0) * acc / tot - starts[i] - 0.05))
                 acc += ln
             sc["ctimes"] = times
-        self.total = self.timeline[-1]["start"] + self.timeline[-1]["dur"]
+        self.main_total = self.timeline[-1]["start"] + self.timeline[-1]["dur"]
+        self.total = self.main_total + self.card_dur
 
 
 # ---------------------------------------------------------------- overlay --
@@ -990,6 +998,91 @@ def draw_caption(ctx, sc, lt):
     ctx.restore()
 
 
+CAP_X, CAP_Y, CAP_MAXW = 474, 1130, 820  # zona aman Shorts (lihat CLAUDE.md)
+
+
+def draw_caption_v2(ctx, sc, lt):
+    """Subtitle besar di zona aman, dengan latar gelap tipis."""
+    idx = -1
+    for i, ct in enumerate(sc["ctimes"]):
+        if lt >= ct:
+            idx = i
+    if idx < 0:
+        return
+    chunk = sc["chunks"][idx]
+    age = lt - sc["ctimes"][idx]
+    pop = 0.78 + 0.22 * ease_out_back(clamp(age / 0.18))
+    size = 106
+    words = [w for w, _ in chunk]
+    sp = text_width(ctx, " ", size)
+    total = sum(text_width(ctx, w, size) for w in words) + sp * (len(words) - 1)
+    if total > CAP_MAXW:
+        pop *= CAP_MAXW / total
+    ctx.save()
+    ctx.translate(CAP_X, CAP_Y)
+    ctx.scale(pop, pop)
+    rrect(ctx, -total / 2 - 34, -78, total + 68, 150, 36)
+    setc(ctx, hexc("#000000", 0.42))
+    ctx.fill()
+    x = -total / 2
+    for w, hl in chunk:
+        wd = text_width(ctx, w, size)
+        text(ctx, w, x, 0, size, YELLOW if hl else WHITE, align="left", stroke=BLACK, sw=16)
+        x += wd + sp
+    ctx.restore()
+
+
+def vignette(ctx, k=0.55):
+    g = cairo.RadialGradient(W / 2, H * 0.45, W * 0.35, W / 2, H * 0.45, H * 0.75)
+    g.add_color_stop_rgba(0, 0, 0, 0, 0)
+    g.add_color_stop_rgba(1, 0, 0, 0, k)
+    ctx.rectangle(0, 0, W, H)
+    ctx.set_source(g)
+    ctx.fill()
+
+
+def draw_title_card(ctx, ep, lt):
+    """Frame judul besar di akhir video, untuk dipilih sebagai sampul Shorts."""
+    g = cairo.LinearGradient(0, 0, 0, H)
+    g.add_color_stop_rgba(0, *hexc("#1b1f3a"))
+    g.add_color_stop_rgba(1, *hexc("#3a1d10"))
+    ctx.rectangle(0, 0, W, H)
+    ctx.set_source(g)
+    ctx.fill()
+    ctx.save()
+    ctx.translate(W / 2, 900)
+    ctx.rotate(lt * 0.2)
+    for i in range(16):
+        ctx.move_to(0, 0)
+        ctx.arc(0, 0, 1400, i * math.pi / 8, i * math.pi / 8 + math.pi / 16)
+        ctx.close_path()
+        setc(ctx, hexc("#ffd23f", 0.06))
+        ctx.fill()
+    ctx.restore()
+    l1, l2 = ep.title_card
+    k = ease_out_back(clamp(lt / 0.35))
+    ctx.save()
+    ctx.translate(CAP_X, 760)
+    ctx.scale(k, k)
+    s1 = 112
+    while text_width(ctx, l1, s1) > CAP_MAXW:
+        s1 -= 4
+    text(ctx, l1, 0, -80, s1, WHITE, stroke=BLACK, sw=18)
+    s2 = 124
+    while text_width(ctx, l2, s2) > CAP_MAXW:
+        s2 -= 4
+    text(ctx, l2, 0, 70, s2, YELLOW, stroke=BLACK, sw=20)
+    ctx.restore()
+    rrect(ctx, CAP_X - 230, 1010, 460, 90, 45)
+    setc(ctx, hexc("#000000", 0.5))
+    ctx.fill()
+    text(ctx, "KOK BISA? KALTIM", CAP_X, 1055, 46, YELLOW)
+    rrect(ctx, CAP_X - 200, 1160, 400, 110, 55)
+    setc(ctx, RED)
+    ctx.fill()
+    text(ctx, "SUBSCRIBE", CAP_X, 1215, 56, WHITE)
+
+
 def draw_badge(ctx, ep, gt):
     rrect(ctx, 40, 150, 330, 76, 38)
     setc(ctx, hexc("#000000", 0.45))
@@ -1002,6 +1095,9 @@ def draw_badge(ctx, ep, gt):
 
 
 def render_frame(ctx, ep, gt):
+    if getattr(ep, "card_dur", 0) and gt >= ep.main_total:
+        draw_title_card(ctx, ep, gt - ep.main_total)
+        return
     for i, sc in enumerate(ep.timeline):
         if gt < sc["start"] + sc["dur"] or i == len(ep.timeline) - 1:
             break
@@ -1018,6 +1114,10 @@ def render_frame(ctx, ep, gt):
         ctx.rectangle(0, 0, W, H)
         setc(ctx, hexc("#ffffff", 0.35 * (1 - lt / 0.12)))
         ctx.fill()
+    if getattr(ep, "style", "v1") == "v2":
+        vignette(ctx)
+        draw_caption_v2(ctx, sc, lt)
+        return
     draw_caption(ctx, sc, lt)
     if sc["name"] != "cta":
         draw_badge(ctx, ep, gt)
