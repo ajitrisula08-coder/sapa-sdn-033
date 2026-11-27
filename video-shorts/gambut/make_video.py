@@ -31,7 +31,12 @@ SCENES = [
 ]
 TITLE_CARD = ("KOK BISA API", "MENYALA DI BAWAH TANAH?")
 
-VOICE_SPANS = None
+# Waktu bicara tiap kalimat (detik) pada narasi ElevenLabs "Bagas" (narasi_bagas.mp3),
+# diukur dari jeda/hening di file audio (ffmpeg silencedetect).
+VOICE_SPANS = [
+    (0.00, 3.18), (3.60, 6.94), (7.42, 12.41), (12.86, 15.32), (15.73, 20.47), (20.85, 23.95),
+    (24.34, 28.89), (29.27, 33.16), (33.51, 40.29), (40.72, 43.28), (43.71, 48.01),
+]
 
 # ----------------------------------------------------------------- warna --
 NIGHT_T = hexc("#0d1028")
@@ -426,7 +431,7 @@ def sc_haze(ctx, lt, d, t):
     setc(ctx, hexc("#b59a74", 0.45 * hz))
     ctx.fill()
     smoke(ctx, t, 0, W, SURF + 400, k=1.2, n=24, seed=31, col=(0.72, 0.62, 0.5))
-    n = int(28 * seg(lt, d * 0.35, d * 0.8))
+    n = 28
     if lt > d * 0.3:
         headline(ctx, f"{n} JUTA ORANG", 470, 110, WHITE, k=seg(lt, d * 0.3, d * 0.45))
         label_chip(ctx, "Kabut asap 2015", CAP_X, 610, 44, hexc("#6b5a3a"), k=seg(lt, d * 0.4, d * 0.55))
