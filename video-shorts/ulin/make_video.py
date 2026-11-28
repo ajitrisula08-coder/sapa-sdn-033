@@ -28,7 +28,12 @@ SCENES = [
     ("end", "Rumahmu pakai kayu ulin? Cerita di komentar, dan [subscribe] Kok Bisa Kaltim!"),
 ]
 TITLE_CARD = ("KOK BISA KAYU INI", "TENGGELAM DI AIR?")
-VOICE_SPANS = None
+# Waktu bicara tiap kalimat (detik) pada narasi ElevenLabs "Bagas" (narasi_bagas.mp3),
+# diukur dari jeda/hening di file audio (ffmpeg silencedetect).
+VOICE_SPANS = [
+    (0.00, 1.64), (1.99, 6.55), (6.96, 12.61), (13.00, 17.78), (18.21, 22.24), (22.59, 28.13),
+    (28.50, 33.47), (33.88, 39.82), (40.19, 45.26), (45.63, 49.59), (50.10, 54.54),
+]
 
 ULIN_C = hexc("#3b2418")
 ULIN_L = hexc("#5a3a26")
@@ -309,7 +314,8 @@ def sc_tough(ctx, lt, d, t):
 
 def sc_uses(ctx, lt, d, t):
     beats = ["Tiang rumah panggung", "Jembatan", "Dermaga", "Kapal"]
-    i = min(3, int(lt / d * 4))
+    f = lt / d
+    i = 0 if f < 0.6 else 1 if f < 0.72 else 2 if f < 0.83 else 3  # ikut urutan kata di narasi
     sky_grad(ctx, hexc("#5fb7e8"), hexc("#ffe1b0"), 1100)
     sun(ctx, 860, 260, 70, t)
     ctx.rectangle(0, 1100, W, H - 1100)
