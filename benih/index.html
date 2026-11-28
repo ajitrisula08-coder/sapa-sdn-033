@@ -1,0 +1,790 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Denah Lahan Mandiri Benih TA 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Archivo:wght@600;800&display=swap">
+<style id="mainstyle">
+/* Layout: lembar survei — kepala dokumen, peta skema lokasi, rekap, lalu sketsa per blok */
+:root{
+  --bg:#f3f6f1; --paper:#ffffff; --ink:#1c2a20; --muted:#5b6b5f; --line:#cfd9cf; --grid:#e3ebe2;
+  --inpari:#2f7d3a; --inpari-soft:#d9ecd9; --cakra:#b7791f; --cakra-soft:#f5e6c8;
+  --accent:#1f5e8c; --warn:#b4462b; --warn-soft:#f7e0d8; --ok:#2f7d3a;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121a15; --paper:#18231c; --ink:#e3ece4; --muted:#9db0a2; --line:#2e3e33; --grid:#223028;
+  --inpari:#6cc27a; --inpari-soft:#1f3a25; --cakra:#e3aa4f; --cakra-soft:#3d2f17;
+  --accent:#7db7e3; --warn:#f08a6c; --warn-soft:#41231b; --ok:#6cc27a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121a15; --paper:#18231c; --ink:#e3ece4; --muted:#9db0a2; --line:#2e3e33; --grid:#223028;
+  --inpari:#6cc27a; --inpari-soft:#1f3a25; --cakra:#e3aa4f; --cakra-soft:#3d2f17;
+  --accent:#7db7e3; --warn:#f08a6c; --warn-soft:#41231b; --ok:#6cc27a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800}
+h2{font-size:1.25rem;font-weight:800}
+h3{font-size:1.02rem;font-weight:600}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums;font-family:var(--f-mono)}
+header.doc{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;border-bottom:2px solid var(--ink);padding-bottom:16px}
+header.doc .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:4px 20px;margin-top:12px}
+header.doc .meta div{min-width:0}
+header.doc .meta b{display:block;font-weight:600}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:7px 12px}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--paper);font-weight:600}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.status{font-size:.85rem;color:var(--muted)}
+.status.err{color:var(--warn)}
+
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.stat .v{font-family:var(--f-display);font-size:1.6rem;font-weight:800}
+.stat .bar{height:6px;border-radius:3px;background:var(--grid);margin-top:8px;overflow:hidden}
+.stat .bar span{display:block;height:100%}
+
+section{display:flex;flex-direction:column;gap:12px}
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.mapbox{background:var(--paper);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.mapbox svg{display:block;width:100%;height:auto;touch-action:none}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.85rem;padding:10px 14px;border-top:1px solid var(--line)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:6px}
+
+.tablewrap{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:820px;font-size:.88rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--bg)}
+tbody tr:last-child td{border-bottom:0}
+tfoot td{font-weight:600;border-top:2px solid var(--ink)}
+.pill{display:inline-block;font-size:.75rem;padding:1px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
+.pill.inpari{background:var(--inpari-soft);color:var(--inpari)}
+.pill.cakra{background:var(--cakra-soft);color:var(--cakra)}
+.pill.ok{background:var(--inpari-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.na{background:var(--grid);color:var(--muted)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.card .code{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0;font-size:.85rem}
+.card dt{color:var(--muted)}
+.card dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.card svg{width:100%;height:auto;display:block}
+.card a{color:var(--accent)}
+
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:0;width:min(640px,calc(100vw - 24px));max-height:calc(100dvh - 24px)}
+dialog::backdrop{background:rgba(10,20,14,.45)}
+dialog form{display:flex;flex-direction:column;gap:14px;padding:18px}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.fgrid .full{grid-column:1/-1}
+label{display:flex;flex-direction:column;gap:3px;font-size:.82rem;color:var(--muted);min-width:0}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%;min-width:0}
+textarea{min-height:56px;resize:vertical}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0;display:grid;gap:8px}
+legend{font-size:.82rem;font-weight:600;padding:0 4px}
+.brow{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1.3fr);gap:8px;align-items:center}
+.brow b{font-family:var(--f-mono)}
+.actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.note{font-size:.82rem;color:var(--muted);background:var(--bg);border:1px dashed var(--line);border-radius:6px;padding:8px 10px}
+.bpsb{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.units{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.unit{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;font-size:.88rem}
+.checks{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:.88rem}
+.checks label{flex-direction:row;align-items:flex-start;gap:8px;color:var(--ink);font-size:.88rem;cursor:pointer}
+.checks input{width:auto;margin-top:3px;accent-color:var(--accent)}
+.checks small{display:block;color:var(--muted)}
+.steps{margin:8px 0 0;padding-left:20px;font-size:.88rem;display:flex;flex-direction:column;gap:4px}
+.gmap{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btnlink{display:inline-block;border-radius:6px;padding:7px 12px;background:var(--accent);color:var(--paper);font-weight:600;text-decoration:none;border:1px solid var(--accent)}
+.card a.btnlink,a.btnlink{color:var(--paper)}
+.card a.btnlink[aria-disabled="true"],a.btnlink[aria-disabled="true"]{color:var(--muted)}
+.btnlink{display:inline-flex;align-items:center;gap:6px}
+.btnlink svg{width:14px;height:14px;flex:none}
+.btnlink[aria-disabled="true"]{background:var(--grid);color:var(--muted);border-color:var(--line);pointer-events:none}
+table.koor{min-width:760px}
+table.koor td{vertical-align:middle}
+table.koor input{padding:5px 7px}
+table.koor .kc{min-width:230px}
+table.koor .kn{width:90px}
+table.koor input.bad{border-color:var(--warn);background:var(--warn-soft)}
+table.koor tr.dirty td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.btnlink.sm{padding:4px 10px;font-size:.82rem}
+.static #btnInfo,.static #btnGps,.static #btnDl,.static #btnDok,.static #isiKoordinat,.static [data-edit],.static [data-del],.static [data-label],.static .note{display:none!important}
+.static .cell,.static .blk{pointer-events:none}
+.static .hint{display:none}
+.static .checks input{pointer-events:none}
+table.prog{min-width:720px}
+table.prog th,table.prog td{text-align:center;padding:6px 4px;font-size:.78rem}
+table.prog th:first-child,table.prog td:first-child{text-align:left;padding-left:10px;white-space:nowrap}
+table.prog th{text-transform:none;letter-spacing:0;font-family:var(--f-body);line-height:1.2;vertical-align:bottom}
+.cell{width:100%;min-height:34px;padding:3px;border-radius:4px;font-size:.72rem;line-height:1.15;border:1px dashed var(--line);background:transparent;color:var(--muted)}
+.cell.done{border:1px solid var(--ok);background:var(--inpari-soft);color:var(--ok);font-weight:600}
+.cell.bpsb{border-style:solid;border-color:var(--accent)}
+.doklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.dok{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0;break-inside:avoid}
+.dok .hd{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px}
+.thumbs img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;border:1px solid var(--line);display:block;background:var(--grid)}
+.dok .thumbs img{cursor:zoom-in}
+.empty{color:var(--muted);font-size:.9rem;padding:16px;border:1px dashed var(--line);border-radius:8px;text-align:center}
+#viewer{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:50;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+#viewer img{max-width:100%;max-height:100%;object-fit:contain}
+@media (max-width:560px){.fgrid{grid-template-columns:1fr} header.doc{grid-template-columns:1fr} .toolbar{justify-content:flex-start}}
+@media print{
+  body{background:#fff;color:#000}
+  .toolbar,.no-print,dialog{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .card,.mapbox,.tablewrap,.stat{break-inside:avoid;border-color:#999}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .print-break{break-before:page}
+}
+</style>
+
+<div class="wrap" id="app">
+  <header class="doc">
+    <div>
+      <div class="eyebrow">Lampiran RUK · Kelompok Tani Suka Maju · Padi Inbrida</div>
+      <h1 id="hTitle">Denah Lahan Kegiatan Mandiri Benih Tanaman Pangan TA 2026</h1>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="toolbar">
+      <button type="button" id="btnInfo">Ubah data umum</button>
+      <button type="button" id="btnGps">Atur posisi dari GPS</button>
+      <button type="button" class="primary" id="btnDl" hidden>Unduh versi cetak</button>
+      <span class="status" id="status" aria-live="polite">Memuat data…</span>
+    </div>
+  </header>
+
+  <div class="summary" id="summary"></div>
+
+  <section>
+    <div class="sec-head">
+      <h2>Peta lokasi blok</h2>
+      <span class="muted no-print hint" style="font-size:.85rem">Skema, tidak berskala. Geser kotak blok sesuai letak sebenarnya; klik untuk mengisi data.</span>
+    </div>
+    <div class="gmap no-print">
+      <a id="gmAll" class="btnlink" target="_blank" rel="noopener" aria-disabled="true">Buka semua titik di Google Maps</a>
+      <button type="button" id="btnKml">Unduh file KML (Google Earth / My Maps)</button>
+      <span class="muted" id="gmInfo" style="font-size:.82rem"></span>
+    </div>
+    <div class="mapbox"><svg id="map" viewBox="0 0 1000 620" role="img" aria-label="Skema letak 10 blok sawah"></svg>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--inpari)"></i>Inpari 49</span>
+        <span><i class="sw" style="background:var(--cakra)"></i>Cakrabuana</span>
+        <span><i class="sw" style="background:var(--warn)"></i>Isolasi belum memenuhi</span>
+        <span class="muted">Garis putus-putus menunjukkan blok yang berdekatan (&lt; 15% lebar peta)</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="no-print" id="isiKoordinat">
+    <div class="sec-head">
+      <h2>Isi koordinat blok</h2>
+      <button type="button" class="primary" id="btnSaveKoor">Simpan semua</button>
+    </div>
+    <div class="note">Salin koordinat dari Google Maps (tekan lama di tengah petak, lalu salin angkanya) dan tempel ke kolom Koordinat. Format Timemark seperti <span class="num">0.279584°S, 116.859416°E</span> juga bisa. Ukuran petak boleh dikosongkan.</div>
+    <div class="tablewrap"><table class="koor">
+      <thead><tr><th>Blok</th><th>Nama anggota</th><th>Koordinat (lat, lng)</th><th>Panjang (m)</th><th>Lebar (m)</th><th>Status</th><th>Peta</th></tr></thead>
+      <tbody id="koorBody"></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Rekap blok</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Blok</th><th>Nama anggota</th><th>Luas (Ha)</th><th>Varietas</th><th>Kelas</th><th>Lokasi</th><th>Koordinat</th><th>Tgl semai / tanam</th><th>Isolasi</th></tr></thead>
+      <tbody id="tbody"></tbody>
+      <tfoot><tr id="tfoot"></tr></tfoot>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Persyaratan BPSB</h2><span class="muted" style="font-size:.85rem">Format formulir bisa berbeda di tiap BPSB/UPTD. Cocokkan dengan formulir resmi setempat.</span></div>
+    <div class="bpsb">
+      <div class="stat">
+        <div class="eyebrow">Unit sertifikasi</div>
+        <div id="units" class="units"></div>
+        <p class="muted" style="font-size:.8rem;margin:8px 0 0">Satu unit = satu varietas, satu kelas benih, luas maks. 10 Ha, selisih tanam antarblok maks. 7 hari (acuan pedoman umum, konfirmasi ke BPSB). Blok yang terpencar biasanya diperiksa per hamparan.</p>
+      </div>
+      <div class="stat">
+        <div class="eyebrow">Daftar berkas permohonan</div>
+        <ul class="checks" id="checks"></ul>
+      </div>
+      <div class="stat">
+        <div class="eyebrow">Tahapan pemeriksaan lapangan</div>
+        <ol class="steps">
+          <li><b>Permohonan</b> diajukan sebelum tanam, dengan berkas lengkap</li>
+          <li><b>Pemeriksaan pendahuluan</b>: lokasi, isolasi, benih sumber</li>
+          <li><b>Fase vegetatif</b>: campuran varietas lain (CVL)</li>
+          <li><b>Fase berbunga</b>: CVL dan isolasi waktu</li>
+          <li><b>Fase masak</b>: sebelum panen</li>
+          <li><b>Pengambilan contoh</b>, uji laboratorium, lalu pemasangan label</li>
+        </ol>
+      </div>
+    </div>
+    <h3 style="margin-top:6px">Label benih sumber</h3>
+    <div class="bpsb" id="labels"></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Blok</th><th>Nama anggota</th><th>Luas</th><th>Benih sumber</th><th>No. label / lot</th><th>Jumlah</th><th>Tgl tanam</th><th>Perkiraan panen</th></tr></thead>
+      <tbody id="tbody2"></tbody>
+    </table></div>
+  </section>
+
+  <section class="print-break" id="dokumentasi">
+    <div class="sec-head">
+      <h2>Dokumentasi kegiatan</h2>
+      <button type="button" class="primary no-print" id="btnDok">Tambah dokumentasi</button>
+    </div>
+    <div class="note no-print">8 tahap. Kegiatan serentak (persiapan, semai, tanam, pemeliharaan, panen) cukup dicatat sekali dengan pilihan “Semua blok”. Tahap bertanda biru (roguing dan pemeriksaan BPSB) dicatat per blok. Cukup 2–3 foto Timemark per catatan.</div>
+    <div class="tablewrap"><table class="prog">
+      <thead id="progHead"></thead><tbody id="progBody"></tbody>
+    </table></div>
+    <div class="sec-head" style="margin-top:6px">
+      <h3>Catatan dan foto</h3>
+      <label class="no-print" style="flex-direction:row;align-items:center;gap:8px">Tampilkan<select id="dokFilter" style="width:auto"></select></label>
+    </div>
+    <div class="doklist" id="dokList"></div>
+  </section>
+
+  <section class="print-break">
+    <h2>Sketsa per blok</h2>
+    <div class="note no-print">Isolasi padi: jarak minimal 3 m dari pertanaman padi varietas lain, atau selisih waktu tanam/berbunga minimal 30 hari. Pastikan kembali ke BPSB setempat.</div>
+    <div class="cards" id="cards"></div>
+  </section>
+</div>
+
+<dialog id="dlgBlok">
+  <form method="dialog" id="fBlok">
+    <div class="sec-head"><h2 id="dTitle">Blok</h2><span class="code muted" id="dCode"></span></div>
+    <div class="fgrid">
+      <label class="full">Nama anggota<input id="f_nama" required></label>
+      <label>Luas (Ha)<input id="f_luas" type="number" step="0.01" min="0"></label>
+      <label>Varietas<select id="f_var"><option>Inpari 49</option><option>Cakrabuana</option></select></label>
+      <label>Kelas benih<select id="f_kelas"><option value="">Belum ditentukan</option><option>BS (Label Kuning)</option><option>FS (Label Putih)</option><option>SS (Label Ungu)</option><option>ES (Label Biru)</option></select></label>
+      <label>Dusun / blok sawah<input id="f_lok"></label>
+      <label>Panjang petak (m)<input id="f_p" type="number" min="1"></label>
+      <label>Lebar petak (m)<input id="f_l" type="number" min="1"></label>
+      <label>Lintang (lat)<input id="f_lat" inputmode="decimal" placeholder="-6.123456"></label>
+      <label>Bujur (lng)<input id="f_lng" inputmode="decimal" placeholder="108.123456"></label>
+      <label>Tanggal semai<input id="f_semai" type="date"></label>
+      <label>Tanggal tanam<input id="f_tanam" type="date"></label>
+    </div>
+    <fieldset>
+      <legend>Batas petak</legend>
+      <div class="brow"><b>U</b><select id="b_u_j"></select><input id="b_u_k" placeholder="keterangan, mis. sawah Pak Budi (Ciherang)"></div>
+      <div class="brow"><b>S</b><select id="b_s_j"></select><input id="b_s_k" placeholder="keterangan"></div>
+      <div class="brow"><b>T</b><select id="b_t_j"></select><input id="b_t_k" placeholder="keterangan"></div>
+      <div class="brow"><b>B</b><select id="b_b_j"></select><input id="b_b_k" placeholder="keterangan"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Benih sumber (sesuai label)</legend>
+      <div class="fgrid">
+        <label>Kelas benih sumber<select id="f_bsk"><option value="">— pilih —</option><option>BS (Label Kuning)</option><option>FS (Label Putih)</option><option>SS (Label Ungu)</option></select></label>
+        <label>Jumlah benih (kg)<input id="f_bskg" type="number" min="0" step="0.5"></label>
+        <label>Nomor seri label / lot<input id="f_bslot"></label>
+        <label>Produsen benih sumber<input id="f_bsprod"></label>
+        <label>Tanggal akhir label<input id="f_bsexp" type="date"></label>
+        <label>Perkiraan panen<input id="f_panen" type="date"></label>
+      </div>
+    </fieldset>
+    <div class="fgrid">
+      <label>Isolasi jarak ke padi lain (m)<input id="f_isoj" type="number" min="0" step="0.5"></label>
+      <label>Isolasi waktu dengan padi lain (hari)<input id="f_isow" type="number" min="0"></label>
+      <label class="full">Catatan / patokan (masjid, jembatan, pohon besar)<textarea id="f_cat"></textarea></label>
+    </div>
+    <div class="actions">
+      <button type="button" id="dCancel">Batal</button>
+      <button type="submit" class="primary" id="dSave">Simpan blok</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgDok">
+  <form method="dialog" id="fDok">
+    <h2 id="kTitle">Dokumentasi kegiatan</h2>
+    <div class="fgrid">
+      <label>Blok<select id="k_blok"></select></label>
+      <label>Tahap kegiatan<select id="k_tahap"></select></label>
+      <label>Tanggal<input id="k_tgl" type="date" required></label>
+      <label>Umur tanaman<input id="k_umur" readonly placeholder="otomatis dari tanggal semai/tanam"></label>
+      <label>Lintang (lat)<input id="k_lat" inputmode="decimal" placeholder="dari Timemark, mis. -0.279584"></label>
+      <label>Bujur (lng)<input id="k_lng" inputmode="decimal" placeholder="116.859416"></label>
+      <label class="full">Catatan kegiatan<textarea id="k_cat" placeholder="mis. Roguing: dicabut 12 rumpun tipe simpang, tinggi berbeda"></textarea></label>
+      <label class="full">Foto (boleh lebih dari satu)<input id="k_foto" type="file" accept="image/*" multiple></label>
+    </div>
+    <div class="thumbs" id="k_prev"></div>
+    <p class="status" id="k_status"></p>
+    <div class="actions"><button type="button" id="kCancel">Batal</button><button type="submit" class="primary" id="kSave">Simpan dokumentasi</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgLabel">
+  <form method="dialog" id="fLabel">
+    <h2 id="lTitle">Label benih sumber</h2>
+    <div class="fgrid">
+      <label>Varietas<input id="l_var"></label>
+      <label>Kelas benih<input id="l_kelas" placeholder="BP / SS"></label>
+      <label>Produsen<input id="l_prod"></label>
+      <label>Alamat produsen<input id="l_alamat"></label>
+      <label>No. induk<input id="l_induk"></label>
+      <label>No. lot<input id="l_lot"></label>
+      <label>No. seri label<input id="l_seri"></label>
+      <label>Isi kemasan<input id="l_isi" placeholder="10 Kg"></label>
+      <label>Tanggal panen<input id="l_panen" type="date"></label>
+      <label>Tanggal selesai uji<input id="l_uji" type="date"></label>
+      <label>Tanggal akhir masa edar<input id="l_exp" type="date"></label>
+      <label>Daya berkecambah (%)<input id="l_dk"></label>
+      <label>CVL (%)<input id="l_cvl"></label>
+      <label>Kadar air (%)<input id="l_ka"></label>
+      <label>Benih murni (%)<input id="l_bm"></label>
+      <label>Kotoran benih (%)<input id="l_kb"></label>
+      <label>BTL / biji gulma (%)<input id="l_btl"></label>
+      <label>Diterbitkan oleh<input id="l_upt"></label>
+    </div>
+    <div class="actions"><button type="button" id="lCancel">Batal</button><button type="submit" class="primary">Simpan label</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgInfo">
+  <form method="dialog" id="fInfo">
+    <h2>Data umum penangkaran</h2>
+    <div class="fgrid">
+      <label class="full">Nama penangkar / kelompok tani<input id="i_kel"></label>
+      <label>Desa<input id="i_desa"></label>
+      <label>Kecamatan<input id="i_kec"></label>
+      <label>Kabupaten<input id="i_kab"></label>
+      <label>Musim tanam<input id="i_mt" placeholder="MT I 2026/2027"></label>
+      <label class="full">Nomor registrasi / izin produsen benih<input id="i_reg"></label>
+    </div>
+    <div class="actions">
+      <button type="button" id="iCancel">Batal</button>
+      <button type="submit" class="primary">Simpan</button>
+    </div>
+  </form>
+</dialog>
+
+<script>window.__SNAPSHOT__={"tanggal": "28-11-2026", "blocks": [{"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsExp": "2026-12-11", "bsKelas": "SS (Label Ungu)", "bsLot": "C.009.146 / seri 8011", "bsProdusen": "BRMP Prov. Kaltim", "catatan": "", "id": "B01", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.281782", "lebar": 100, "lng": "116.857636", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "Aji Prasetia", "panjang": 100, "semai": "", "tanam": "", "urut": 1, "varietas": "Inpari 49", "x": 326, "y": 523}, {"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsExp": "2026-12-11", "bsKelas": "SS (Label Ungu)", "bsLot": "C.009.146 / seri 8011", "bsProdusen": "BRMP Prov. Kaltim", "catatan": "", "id": "B02", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.277211", "lebar": 100, "lng": "116.860812", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "Jaka Trisula", "panjang": 100, "semai": "", "tanam": "", "urut": 2, "varietas": "Inpari 49", "x": 505, "y": 265}, {"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsExp": "2026-12-11", "bsKelas": "SS (Label Ungu)", "bsLot": "C.009.146 / seri 8011", "bsProdusen": "BRMP Prov. Kaltim", "catatan": "", "id": "B03", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.281332", "lebar": 100, "lng": "116.859711", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "Sugianto", "panjang": 100, "semai": "", "tanam": "", "urut": 3, "varietas": "Inpari 49", "x": 443, "y": 497}, {"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsExp": "2026-12-11", "bsKelas": "SS (Label Ungu)", "bsLot": "C.009.146 / seri 8011", "bsProdusen": "BRMP Prov. Kaltim", "catatan": "", "id": "B04", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.280695", "lebar": 100, "lng": "116.859633", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "Hartoyo", "panjang": 100, "semai": "", "tanam": "", "urut": 4, "varietas": "Inpari 49", "x": 439, "y": 462}, {"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsExp": "2026-12-11", "bsKelas": "SS (Label Ungu)", "bsLot": "C.009.146 / seri 8011", "bsProdusen": "BRMP Prov. Kaltim", "catatan": "", "id": "B05", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.281368", "lebar": 100, "lng": "116.862380", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "Kartono", "panjang": 100, "semai": "", "tanam": "", "urut": 5, "varietas": "Inpari 49", "x": 593, "y": 499}, {"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsExp": "2026-12-11", "bsKelas": "SS (Label Ungu)", "bsLot": "C.009.146 / seri 8011", "bsProdusen": "BRMP Prov. Kaltim", "catatan": "", "id": "B06", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.282264", "lebar": 100, "lng": "116.858681", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "Wahid", "panjang": 100, "semai": "", "tanam": "", "urut": 6, "varietas": "Inpari 49", "x": 385, "y": 550}, {"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsExp": "2026-12-11", "bsKelas": "SS (Label Ungu)", "bsLot": "C.009.146 / seri 8011", "bsProdusen": "BRMP Prov. Kaltim", "catatan": "", "id": "B07", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.278939", "lebar": 100, "lng": "116.861069", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "Roni", "panjang": 100, "semai": "", "tanam": "", "urut": 7, "varietas": "Inpari 49", "x": 520, "y": 362}, {"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsExp": "2026-12-11", "bsKelas": "SS (Label Ungu)", "bsLot": "C.009.146 / seri 8011", "bsProdusen": "BRMP Prov. Kaltim", "catatan": "", "id": "B08", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.278220", "lebar": 100, "lng": "116.861225", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "Rohmadul Aziz", "panjang": 100, "semai": "", "tanam": "", "urut": 8, "varietas": "Inpari 49", "x": 528, "y": 322}, {"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsKelas": "SS (Label Ungu)", "catatan": "", "id": "B09", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.273754", "lebar": 100, "lng": "116.861127", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "Danang", "panjang": 100, "semai": "", "tanam": "", "urut": 9, "varietas": "Cakrabuana", "x": 523, "y": 70}, {"batas": {"b": {"j": "", "k": ""}, "s": {"j": "", "k": ""}, "t": {"j": "", "k": ""}, "u": {"j": "", "k": ""}}, "bsKelas": "SS (Label Ungu)", "catatan": "", "id": "B10", "isoJarak": "", "isoWaktu": "", "kelas": "ES (Label Biru)", "lat": "-0.279405", "lebar": 100, "lng": "116.863810", "lokasi": "Dsn. Liang Berakat", "luas": 1, "nama": "I Ketut Sudiana", "panjang": 100, "semai": "", "tanam": "", "urut": 10, "varietas": "Cakrabuana", "x": 674, "y": 389}], "info": {"desa": "Teratak", "kabupaten": "Kutai Kartanegara", "kecamatan": "Muara Kaman", "kelompok": "Kelompok Tani Suka Maju", "musim": "TA 2026 · Mandiri Benih Tanaman Pangan · Padi Inbrida"}, "berkas": {"permohonan": false}, "labels": {"inpari49": {"alamat": "Jl. Ir. P.M. Noor, Sempaja", "bm": "100,0", "btl": "0,0", "cvl": "0,1", "dk": "97", "exp": "2026-12-11", "induk": "Pdn.RM.P.64.03.140.C.009.146", "isi": "10 Kg", "ka": "11,7", "kb": "0,0", "kelas": "BP (Benih Pokok)", "lot": "C.009.146", "panen": "2026-04-29", "produsen": "BRMP Prov. Kaltim", "seri": "8011", "uji": "2026-06-11", "upt": "UPTD PSBTPH Prov. Kaltim", "varietas": "Inpari 49 Jembar"}}, "doks": []};</script>
+<script>
+(function(){
+const BATAS = [["","— pilih —"],["padi_sama","Sawah padi varietas sama"],["padi_lain","Sawah padi varietas lain"],["jalan","Jalan"],["saluran","Saluran irigasi"],["sungai","Sungai"],["pematang","Pematang besar"],["pemukiman","Pemukiman"],["kebun","Kebun / tegalan"],["bera","Lahan bera"],["lain","Lainnya"]];
+const BLABEL = Object.fromEntries(BATAS);
+const NAMES = ["Aji Prasetia","Jaka Trisula","Sugianto","Hartoyo","Kartono","Wahid","Roni","Rohmadul Aziz","Danang","I Ketut Sudiana"];
+function defaults(){
+  return NAMES.map((n,i)=>({id:"B"+String(i+1).padStart(2,"0"),urut:i+1,nama:n,luas:1,varietas:i<8?"Inpari 49":"Cakrabuana",kelas:"",lokasi:"",panjang:100,lebar:100,lat:"",lng:"",semai:"",tanam:"",
+    batas:{u:{j:"",k:""},s:{j:"",k:""},t:{j:"",k:""},b:{j:"",k:""}},isoJarak:"",isoWaktu:"",catatan:"",x:80+(i%5)*190,y:i<5?150:430}));
+}
+let blocks = defaults();
+let info = {kelompok:"",desa:"",kecamatan:"",kabupaten:"",musim:""};
+let db = null, live = false;
+const $ = id=>document.getElementById(id);
+const esc = s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LS="denah-penangkaran-v1";
+function loadLocal(){try{const r=JSON.parse(localStorage.getItem(LS)||"null");if(r){if(r.blocks)blocks=r.blocks;if(r.info)info=r.info;if(r.berkas)berkas=r.berkas;if(r.labels)labels=r.labels;}}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({blocks,info,berkas,labels}))}catch(e){}}
+function setStatus(t,err){const s=$("status");s.textContent=t;s.classList.toggle("err",!!err)}
+
+function isoState(b){
+  const lain = ["u","s","t","b"].some(k=>b.batas?.[k]?.j==="padi_lain");
+  const filled = ["u","s","t","b"].every(k=>b.batas?.[k]?.j);
+  const j=parseFloat(b.isoJarak), w=parseFloat(b.isoWaktu);
+  if(!filled && !lain) return {c:"na",t:"Batas belum diisi"};
+  if(!lain) return {c:"ok",t:"Aman"};
+  if((j>=3)||(w>=30)) return {c:"ok",t:j>=3?`Jarak ${j} m`:`Waktu ${w} hari`};
+  return {c:"warn",t:"Perlu isolasi"};
+}
+const vcls = v=>v==="Cakrabuana"?"cakra":"inpari";
+const vcol = v=>v==="Cakrabuana"?"var(--cakra)":"var(--inpari)";
+const vsoft = v=>v==="Cakrabuana"?"var(--cakra-soft)":"var(--inpari-soft)";
+const sorted = ()=>blocks.slice().sort((a,b)=>a.urut-b.urut);
+
+function renderMeta(){
+  const m=[["Penangkar / kelompok",info.kelompok],["Desa",info.desa],["Kecamatan",info.kecamatan],["Kabupaten",info.kabupaten],["Musim tanam",info.musim],["No. registrasi produsen",info.reg]];
+  $("meta").innerHTML=m.map(([k,v])=>`<div><span class="eyebrow">${k}</span><b>${v?esc(v):'<span class="muted">belum diisi</span>'}</b></div>`).join("");
+}
+function renderSummary(){
+  const tot=blocks.reduce((s,b)=>s+(+b.luas||0),0);
+  const by=v=>blocks.filter(b=>b.varietas===v);
+  const sum=a=>a.reduce((s,b)=>s+(+b.luas||0),0);
+  const lengkap=blocks.filter(b=>b.lokasi&&b.lat&&b.lng&&["u","s","t","b"].every(k=>b.batas?.[k]?.j)).length;
+  const warn=blocks.filter(b=>isoState(b).c==="warn").length;
+  const pct=(a,t)=>t?Math.min(100,a/t*100):0;
+  $("summary").innerHTML=`
+   <div class="stat"><div class="eyebrow">Total luas</div><div class="v num">${tot.toFixed(2)} Ha</div><div class="muted">${blocks.length} anggota, ${blocks.length} blok</div></div>
+   <div class="stat"><div class="eyebrow">Inpari 49</div><div class="v num" style="color:var(--inpari)">${sum(by("Inpari 49")).toFixed(2)} Ha</div><div class="muted">${by("Inpari 49").length} blok</div><div class="bar"><span style="width:${pct(sum(by("Inpari 49")),tot)}%;background:var(--inpari)"></span></div></div>
+   <div class="stat"><div class="eyebrow">Cakrabuana</div><div class="v num" style="color:var(--cakra)">${sum(by("Cakrabuana")).toFixed(2)} Ha</div><div class="muted">${by("Cakrabuana").length} blok</div><div class="bar"><span style="width:${pct(sum(by("Cakrabuana")),tot)}%;background:var(--cakra)"></span></div></div>
+   <div class="stat"><div class="eyebrow">Data lengkap</div><div class="v num">${lengkap}/${blocks.length}</div><div class="muted">${warn?`<span style="color:var(--warn)">${warn} blok perlu isolasi</span>`:"lokasi, GPS, dan batas"}</div><div class="bar"><span style="width:${pct(lengkap,blocks.length)}%;background:var(--accent)"></span></div></div>`;
+}
+function renderMap(){
+  const W=1000,H=620,bw=130,bh=90;
+  let s=`<defs><pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="var(--grid)" stroke-width="1"/></pattern></defs>
+  <rect width="${W}" height="${H}" fill="var(--paper)"/><rect width="${W}" height="${H}" fill="url(#g)"/>
+  <g transform="translate(${W-60},60)"><circle r="26" fill="var(--paper)" stroke="var(--line)"/><path d="M0-20L7 6 0 1-7 6Z" fill="var(--ink)"/><text y="-30" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="14" font-weight="600" fill="var(--ink)">U</text></g>`;
+  /* display positions: saved positions pushed apart so boxes never overlap */
+  const bs=sorted().map(b=>({...b}));
+  const GX=bw+12,GY=bh+12;
+  for(let it=0;it<300;it++){let moved=false;
+    for(let i=0;i<bs.length;i++)for(let k=i+1;k<bs.length;k++){const a=bs[i],c=bs[k];
+      const dx=c.x-a.x,dy=c.y-a.y,ox=GX-Math.abs(dx),oy=GY-Math.abs(dy);
+      if(ox>0&&oy>0){moved=true;
+        if(ox/GX<oy/GY){const s=(dx>=0?1:-1)*ox/2;a.x-=s;c.x+=s}else{const s=(dy>=0?1:-1)*oy/2;a.y-=s;c.y+=s}}}
+    for(const b of bs){b.x=Math.max(bw/2+5,Math.min(W-bw/2-5,b.x));b.y=Math.max(bh/2+5,Math.min(H-bh/2-5,b.y))}
+    if(!moved)break}
+  for(let i=0;i<bs.length;i++)for(let k=i+1;k<bs.length;k++){const a=bs[i],b=bs[k];const d=Math.hypot(a.x-b.x,a.y-b.y);if(d<150+bw*0.6)s+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="var(--muted)" stroke-dasharray="4 4" stroke-width="1"/>`;}
+  for(const b of bs){
+    const st=isoState(b),c=vcol(b.varietas);
+    s+=`<g class="blk" data-id="${b.id}" transform="translate(${b.x-bw/2},${b.y-bh/2})" style="cursor:grab">
+      <rect width="${bw}" height="${bh}" rx="4" fill="${vsoft(b.varietas)}" stroke="${st.c==="warn"?"var(--warn)":c}" stroke-width="${st.c==="warn"?3:2}"/>
+      <path d="M0 ${bh/3}H${bw}M0 ${bh*2/3}H${bw}" stroke="${c}" stroke-opacity=".25"/>
+      <text x="8" y="20" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="600" fill="${c}">${b.id} · ${(+b.luas||0).toFixed(2)} Ha</text>
+      <text x="8" y="44" font-family="IBM Plex Sans,sans-serif" font-size="14" font-weight="600" fill="var(--ink)">${esc(b.nama.length>16?b.nama.slice(0,15)+"…":b.nama)}</text>
+      <text x="8" y="64" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="var(--muted)">${esc(b.varietas)}</text>
+      <text x="8" y="81" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="var(--muted)">${esc((b.lokasi||"lokasi belum diisi").slice(0,22))}</text>
+    </g>`;
+  }
+  $("map").innerHTML=s;
+}
+function renderTable(){
+  $("tbody").innerHTML=sorted().map(b=>{const st=isoState(b);
+    const gps=b.lat&&b.lng?`<a href="https://www.google.com/maps?q=${encodeURIComponent(b.lat+','+b.lng)}" target="_blank" rel="noopener" class="num" style="color:var(--accent)">${esc(b.lat)}, ${esc(b.lng)}</a>`:'<span class="muted">—</span>';
+    return `<tr><td class="num">${b.id}</td><td>${esc(b.nama)}</td><td class="num">${(+b.luas||0).toFixed(2)}</td><td><span class="pill ${vcls(b.varietas)}">${esc(b.varietas)}</span></td><td>${esc(b.kelas)||'<span class="muted">—</span>'}</td><td>${esc(b.lokasi)||'<span class="muted">—</span>'}</td><td>${gps}</td><td class="num">${esc(b.semai)||"—"} / ${esc(b.tanam)||"—"}</td><td><span class="pill ${st.c}">${st.t}</span></td></tr>`}).join("");
+  const tot=blocks.reduce((s,b)=>s+(+b.luas||0),0);
+  $("tfoot").innerHTML=`<td colspan="2">Jumlah</td><td class="num">${tot.toFixed(2)}</td><td colspan="6"></td>`;
+}
+function sketch(b){
+  const p=+b.panjang||100,l=+b.lebar||100,max=200,sc=max/Math.max(p,l),w=Math.max(60,p*sc),h=Math.max(50,l*sc);
+  const W=340,H=290,x=(W-w)/2,y=(H-h)/2,c=vcol(b.varietas);
+  const bt=k=>{const o=b.batas?.[k]||{};return esc((BLABEL[o.j]&&o.j?BLABEL[o.j]:"?")+(o.k?": "+o.k:""))};
+  const trunc=t=>t.length>44?t.slice(0,43)+"…":t;
+  const lain=k=>b.batas?.[k]?.j==="padi_lain";
+  const tc=k=>lain(k)?"var(--warn)":"var(--muted)";
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sketsa petak ${b.id}">
+   <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${vsoft(b.varietas)}" stroke="${c}" stroke-width="2"/>
+   <text x="${W/2}" y="${H/2-4}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="600" fill="${c}">${b.id}</text>
+   <text x="${W/2}" y="${H/2+14}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="var(--ink)">${(+b.luas||0).toFixed(2)} Ha</text>
+   <text x="${W/2}" y="${y+h+16}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="var(--muted)">${p} m</text>
+   <text transform="translate(${x+w+12},${H/2}) rotate(90)" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="var(--muted)">${l} m</text>
+   <text x="${W/2}" y="${y-10}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="${tc('u')}"><tspan font-weight="700">U </tspan>${trunc(bt("u"))}</text>
+   <text x="${W/2}" y="${y+h+32}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="${tc('s')}"><tspan font-weight="700">S </tspan>${trunc(bt("s"))}</text>
+   <text transform="translate(${x-12},${H/2}) rotate(-90)" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="${tc('b')}"><tspan font-weight="700">B </tspan>${trunc(bt("b"))}</text>
+   <text transform="translate(${x+w+28},${H/2}) rotate(90)" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="${tc('t')}"><tspan font-weight="700">T </tspan>${trunc(bt("t"))}</text>
+  </svg>`;
+}
+function renderCards(){
+  $("cards").innerHTML=sorted().map(b=>{const st=isoState(b);return `<article class="card">
+    <div class="top"><div><div class="code">${b.id} · ${esc(b.lokasi||"lokasi belum diisi")}</div><h3>${esc(b.nama)}</h3></div><span class="pill ${vcls(b.varietas)}">${esc(b.varietas)}</span></div>
+    ${sketch(b)}
+    <dl><dt>Kelas</dt><dd>${esc(b.kelas)||"—"}</dd><dt>Koordinat</dt><dd class="num">${b.lat&&b.lng?`<a href="https://www.google.com/maps?q=${encodeURIComponent(b.lat+','+b.lng)}" target="_blank" rel="noopener">${esc(b.lat+", "+b.lng)}</a>`:"—"}</dd>
+    <dt>Semai/tanam</dt><dd class="num">${esc(b.semai)||"—"} / ${esc(b.tanam)||"—"}</dd>
+    <dt>Isolasi</dt><dd><span class="pill ${st.c}">${st.t}</span></dd>${b.catatan?`<dt>Catatan</dt><dd>${esc(b.catatan)}</dd>`:""}</dl>
+    <div class="actions no-print" style="justify-content:space-between">${hasGps(b)?`<a class="btnlink" href="https://www.google.com/maps?q=${encodeURIComponent((+b.lat)+','+(+b.lng))}" target="_blank" rel="noopener" aria-label="Buka peta ${b.id} di Google Maps"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>Buka peta</a>`:`<a class="btnlink" aria-disabled="true" title="Isi koordinat dulu">Koordinat belum diisi</a>`}<button type="button" data-edit="${b.id}">Isi / ubah data</button></div></article>`}).join("");
+}
+const CHECKS=[
+ ["permohonan","Surat permohonan sertifikasi","formulir dari BPSB / UPTD setempat"],
+ ["registrasi","Tanda daftar / izin produsen benih","atau rekomendasi dinas untuk kelompok"],
+ ["label","Label benih sumber","per varietas: Inpari 49 dan Cakrabuana"],
+ ["peta","Peta lokasi dan sketsa lahan","halaman ini, versi cetak"],
+ ["anggota","Daftar anggota, luas, dan lokasi","tabel rekap di halaman ini"],
+ ["jadwal","Rencana semai, tanam, dan panen","diisi per blok"],
+ ["biaya","Bukti bayar biaya pemeriksaan","sesuai tarif retribusi daerah"]];
+let berkas={};
+let labels={inpari49:{varietas:"Inpari 49"},cakrabuana:{varietas:"Cakrabuana"}};
+const LF=[["varietas","l_var"],["kelas","l_kelas"],["produsen","l_prod"],["alamat","l_alamat"],["induk","l_induk"],["lot","l_lot"],["seri","l_seri"],["isi","l_isi"],["panen","l_panen"],["uji","l_uji"],["exp","l_exp"],["dk","l_dk"],["cvl","l_cvl"],["ka","l_ka"],["bm","l_bm"],["kb","l_kb"],["btl","l_btl"],["upt","l_upt"]];
+const fmtD=d=>{if(!d)return"—";const p=d.split("-");return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:d};
+function renderLabels(){
+  const today=new Date();today.setHours(0,0,0,0);
+  $("labels").innerHTML=["inpari49","cakrabuana"].map(k=>{const L=labels[k]||{};const v=k==="cakrabuana"?"Cakrabuana":"Inpari 49";
+    let exp="";if(L.exp){const days=Math.round((new Date(L.exp)-today)/864e5);exp=days<0?`<span class="pill warn">Masa edar habis ${-days} hari lalu</span>`:days<=21?`<span class="pill warn">Masa edar habis ${days} hari lagi</span>`:`<span class="pill ok">Masa edar ${days} hari lagi</span>`}
+    const filled=!!(L.lot||L.seri||L.produsen);
+    const row=(a,b)=>`<dt>${a}</dt><dd class="num">${b}</dd>`;
+    return `<div class="stat card" style="gap:8px"><div class="top"><div><div class="eyebrow">${esc(L.kelas||"Kelas ?")} · ${esc(L.upt||"penerbit label ?")}</div><h3>${esc(L.varietas||v)}</h3></div><span class="pill ${vcls(v)}">${v}</span></div>
+     ${filled?`<dl>${row("Produsen",esc(L.produsen||"—"))}${row("No. induk",esc(L.induk||"—"))}${row("No. lot",esc(L.lot||"—"))}${row("No. seri label",esc(L.seri||"—"))}${row("Isi kemasan",esc(L.isi||"—"))}${row("Tgl panen",fmtD(L.panen))}${row("Tgl selesai uji",fmtD(L.uji))}${row("Akhir masa edar",fmtD(L.exp))}
+       ${row("Daya berkecambah",esc(L.dk||"—")+" %")}${row("CVL",esc(L.cvl||"—")+" %")}${row("Kadar air",esc(L.ka||"—")+" %")}${row("Benih murni",esc(L.bm||"—")+" %")}${row("Kotoran / BTL",esc(L.kb||"—")+" % / "+esc(L.btl||"—")+" %")}</dl>${exp}`
+      :`<p class="muted" style="margin:0">Data label belum diisi. Foto label dari dekat lalu isi di sini.</p>`}
+     <div class="actions no-print"><button type="button" data-label="${k}">${filled?"Ubah data label":"Isi data label"}</button></div></div>`}).join("");
+}
+let editingLabel=null;
+document.addEventListener("click",e=>{const t=e.target.closest("[data-label]");if(!t)return;editingLabel=t.dataset.label;const L=labels[editingLabel]||{};
+  $("lTitle").textContent="Label benih sumber · "+(editingLabel==="cakrabuana"?"Cakrabuana":"Inpari 49");
+  for(const [f,id] of LF)$(id).value=L[f]||"";$("dlgLabel").showModal()});
+$("lCancel").onclick=()=>$("dlgLabel").close();
+$("fLabel").addEventListener("submit",async e=>{e.preventDefault();if(!editingLabel)return;const L={};for(const [f,id] of LF)L[f]=$(id).value.trim();
+  labels={...labels,[editingLabel]:L};renderLabels();$("dlgLabel").close();saveLocal();
+  if(!db){setStatus("Tersimpan di perangkat ini saja");return}
+  try{await db.doc("label/"+editingLabel).set(L);setStatus("Tersimpan")}catch(err){setStatus("Gagal menyimpan: "+(err?.message||err?.code),true)}});
+function renderBpsb(){
+  renderLabels();
+  const groups={};for(const b of blocks){const k=b.varietas+"|"+(b.kelas||"");(groups[k]=groups[k]||[]).push(b)}
+  let n=0;
+  $("units").innerHTML=Object.entries(groups).map(([k,bs])=>{n++;const [v,kl]=k.split("|");const luas=bs.reduce((s,b)=>s+(+b.luas||0),0);
+    const t=bs.map(b=>b.tanam).filter(Boolean).map(d=>new Date(d).getTime());
+    const spread=t.length>1?Math.round((Math.max(...t)-Math.min(...t))/864e5):null;
+    const flags=[];if(luas>10)flags.push(`<span class="pill warn">Lebih dari 10 Ha</span>`);
+    if(spread!==null)flags.push(spread>7?`<span class="pill warn">Selisih tanam ${spread} hari</span>`:`<span class="pill ok">Selisih tanam ${spread} hari</span>`);
+    if(!kl)flags.push(`<span class="pill na">Kelas belum dipilih</span>`);
+    return `<div class="unit"><span><b>Unit ${n}</b> · <span class="pill ${vcls(v)}">${esc(v)}</span> ${esc(kl)} · <span class="num">${luas.toFixed(2)} Ha</span>, ${bs.length} blok (${bs.map(b=>b.id).sort().join(", ")})</span><span>${flags.join(" ")}</span></div>`}).join("");
+  $("checks").innerHTML=CHECKS.map(([k,t,s])=>`<li><label><input type="checkbox" id="ck_${k}" data-ck="${k}" ${berkas[k]?"checked":""}><span>${t}<small>${s}</small></span></label></li>`).join("");
+  $("tbody2").innerHTML=sorted().map(b=>`<tr><td class="num">${b.id}</td><td>${esc(b.nama)}</td><td class="num">${(+b.luas||0).toFixed(2)} Ha</td>
+    <td>${b.bsKelas?esc(b.bsKelas):'<span class="muted">—</span>'}${b.bsProdusen?`<br><small class="muted">${esc(b.bsProdusen)}</small>`:""}</td>
+    <td class="num">${esc(b.bsLot)||"—"}${b.bsExp?`<br><small class="muted">s.d. ${esc(b.bsExp)}</small>`:""}</td>
+    <td class="num">${b.bsKg?esc(b.bsKg)+" kg":"—"}</td><td class="num">${esc(b.tanam)||"—"}</td><td class="num">${esc(b.panen)||"—"}</td></tr>`).join("");
+}
+document.addEventListener("change",async e=>{const k=e.target?.dataset?.ck;if(!k)return;berkas={...berkas,[k]:e.target.checked};saveLocal();
+  if(!db){setStatus("Tersimpan di perangkat ini saja");return}
+  try{await db.doc("info/berkas").set(berkas);setStatus("Tersimpan")}catch(err){setStatus("Gagal menyimpan: "+(err?.message||err?.code),true)}});
+/* ---------- dokumentasi ---------- */
+const TAHAP=[
+ ["persiapan","Persiapan lahan & pemeriksaan pendahuluan",1,"Persiapan + periksa awal"],
+ ["semai","Semai",0,"Semai"],
+ ["tanam","Tanam",0,"Tanam"],
+ ["pelihara","Pemeliharaan (pupuk, siang, OPT)",0,"Pemeliharaan"],
+ ["veg","Roguing & pemeriksaan fase vegetatif",1,"Vegetatif (roguing + BPSB)"],
+ ["bunga","Roguing & pemeriksaan fase berbunga",1,"Berbunga (roguing + BPSB)"],
+ ["masak","Roguing & pemeriksaan fase masak",1,"Masak (roguing + BPSB)"],
+ ["panen","Panen & pascapanen",0,"Panen & pasca"]];
+const TNAME=Object.fromEntries(TAHAP.map(t=>[t[0],t[1]]));
+let doks=[],assetsApi=null,assetsTried=false,dokFilter="";
+const short=t=>(TAHAP.find(x=>x[1]===t)||[])[3]||t;
+function dokFor(bid,tid){return doks.filter(d=>d.tahap===tid&&(d.blok===bid||d.blok==="SEMUA"))}
+function renderProgress(){
+  $("progHead").innerHTML=`<tr><th>Blok</th>${TAHAP.map(t=>`<th${t[2]?' style="color:var(--accent)"':""}>${short(t[1])}</th>`).join("")}</tr>`;
+  $("progBody").innerHTML=sorted().map(b=>`<tr><td><b class="num">${b.id}</b> ${esc(b.nama)}</td>${TAHAP.map(t=>{const ds=dokFor(b.id,t[0]);
+    const last=ds.map(d=>d.tanggal).sort().pop();const nf=ds.reduce((s,d)=>s+(d.foto?.length||0),0);
+    return `<td><button type="button" class="cell ${ds.length?"done":""} ${t[2]?"bpsb":""}" data-dok="${b.id}|${t[0]}" aria-label="${esc(b.id+" "+t[1])}">${ds.length?`${fmtD(last).slice(0,5)}${nf?`<br>${nf} foto`:""}`:"+"}</button></td>`}).join("")}</tr>`).join("");
+  const opts=[["","Semua blok"],...sorted().map(b=>[b.id,b.id+" · "+b.nama])];
+  $("dokFilter").innerHTML=opts.map(([v,t])=>`<option value="${v}" ${v===dokFilter?"selected":""}>${esc(t)}</option>`).join("");
+}
+function umur(b,tgl){if(!b||!tgl)return"";const out=[];if(b.semai){const d=Math.round((new Date(tgl)-new Date(b.semai))/864e5);if(d>=0)out.push(d+" HSS")}if(b.tanam){const d=Math.round((new Date(tgl)-new Date(b.tanam))/864e5);if(d>=0)out.push(d+" HST")}return out.join(" · ")}
+function renderDokList(){
+  const list=doks.filter(d=>!dokFilter||d.blok===dokFilter||d.blok==="SEMUA").sort((a,b)=>(b.tanggal||"").localeCompare(a.tanggal||"")||(b.dibuat||0)-(a.dibuat||0));
+  if(!list.length){$("dokList").innerHTML=`<div class="empty" style="grid-column:1/-1">Belum ada dokumentasi. Klik <b>Tambah dokumentasi</b> atau kotak di tabel untuk mencatat kegiatan pertama, misalnya semai.</div>`;return}
+  $("dokList").innerHTML=list.map(d=>{const b=blocks.find(x=>x.id===d.blok);
+    const gps=d.lat&&d.lng?`<a href="https://www.google.com/maps?q=${encodeURIComponent(d.lat+','+d.lng)}" target="_blank" rel="noopener" class="num" style="color:var(--accent);font-size:.8rem">${esc(d.lat)}, ${esc(d.lng)}</a>`:"";
+    return `<article class="dok"><div class="hd"><div><div class="code muted num" style="font-size:.78rem">${fmtD(d.tanggal)} · ${d.blok==="SEMUA"?"Semua blok":esc(d.blok+" · "+(b?.nama||""))}</div><h3>${esc(TNAME[d.tahap]||d.tahap)}</h3></div><span class="muted num" style="font-size:.75rem;white-space:nowrap">${esc(umur(b,d.tanggal))}</span></div>
+      ${d.catatan?`<p style="margin:0;font-size:.88rem">${esc(d.catatan)}</p>`:""}
+      ${d.foto?.length?`<div class="thumbs">${d.foto.map(id=>/^[0-9a-f]{32}$/.test(id)?`<img src="/_blob/${id}" alt="Foto ${esc(TNAME[d.tahap]||"")}" loading="lazy" data-view="/_blob/${id}">`:"").join("")}</div>`:""}
+      ${gps}
+      <div class="actions no-print"><button type="button" data-del="${esc(d._id)}">Hapus</button></div></article>`}).join("");
+}
+$("dokFilter").addEventListener("change",e=>{dokFilter=e.target.value;renderDokList()});
+document.addEventListener("click",e=>{const v=e.target.closest("[data-view]");if(v){const o=document.createElement("div");o.id="viewer";o.innerHTML=`<img src="${v.dataset.view}" alt="Foto dokumentasi">`;o.onclick=()=>o.remove();document.body.appendChild(o);return}
+  const del=e.target.closest("[data-del]");if(del){if(del.dataset.armed!=="1"){del.dataset.armed="1";del.textContent="Yakin hapus? Klik lagi";setTimeout(()=>{del.dataset.armed="";del.textContent="Hapus"},4000);return}
+    const id=del.dataset.del;doks=doks.filter(d=>d._id!==id);renderProgress();renderDokList();
+    if(db)db.collection("dok").doc(id).delete().then(()=>setStatus("Dokumentasi dihapus")).catch(err=>setStatus("Gagal menghapus: "+(err?.message||err?.code),true));return}
+  const c=e.target.closest("[data-dok]");if(c){const [bid,tid]=c.dataset.dok.split("|");openDok(bid,tid)}});
+$("btnDok").onclick=()=>openDok(dokFilter||"","");
+let pending=[];
+async function openDok(bid,tid){
+  $("k_blok").innerHTML=`<option value="SEMUA">Semua blok (B01–B10)</option>`+sorted().map(b=>`<option value="${b.id}">${b.id} · ${esc(b.nama)}</option>`).join("");
+  $("k_tahap").innerHTML=TAHAP.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join("");
+  $("k_blok").value=bid||"SEMUA";if(tid)$("k_tahap").value=tid;
+  $("k_tgl").value=new Date().toISOString().slice(0,10);$("k_lat").value="";$("k_lng").value="";$("k_cat").value="";$("k_foto").value="";pending=[];$("k_prev").innerHTML="";
+  updUmur();
+  if(!assetsTried){assetsTried=true;try{assetsApi=await window.claude?.use?.("assets")}catch(e){assetsApi=null}}
+  $("k_foto").disabled=!assetsApi;$("k_status").textContent=assetsApi?"":"Unggah foto tidak tersedia untuk akun ini. Catatan tetap bisa disimpan.";
+  $("dlgDok").showModal();
+}
+function updUmur(){const b=blocks.find(x=>x.id===$("k_blok").value);$("k_umur").value=umur(b,$("k_tgl").value)}
+$("k_blok").addEventListener("change",updUmur);$("k_tgl").addEventListener("change",updUmur);
+$("kCancel").onclick=()=>$("dlgDok").close();
+$("k_foto").addEventListener("change",e=>{pending=[...e.target.files].slice(0,8);$("k_prev").innerHTML=pending.map(f=>`<img src="${URL.createObjectURL(f)}" alt="">`).join("");if(e.target.files.length>8)$("k_status").textContent="Maksimal 8 foto per catatan."});
+function shrink(file){return new Promise(res=>{const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{const m=1600,s=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>res(b||file),"image/jpeg",.82)};img.onerror=()=>{URL.revokeObjectURL(u);res(file)};img.src=u})}
+$("fDok").addEventListener("submit",async e=>{e.preventDefault();
+  if(!db){$("k_status").textContent="Penyimpanan bersama tidak tersedia, dokumentasi belum bisa disimpan.";return}
+  const btn=$("kSave");btn.disabled=true;const ids=[];
+  try{
+    for(let i=0;i<pending.length;i++){$("k_status").textContent=`Mengunggah foto ${i+1} dari ${pending.length}…`;const r=await assetsApi.upload(await shrink(pending[i]),{type:"image/jpeg"});ids.push(r.id)}
+    $("k_status").textContent="Menyimpan catatan…";
+    const doc={blok:$("k_blok").value,tahap:$("k_tahap").value,tanggal:$("k_tgl").value,lat:$("k_lat").value.trim().replace(",","."),lng:$("k_lng").value.trim().replace(",","."),catatan:$("k_cat").value.trim(),foto:ids,dibuat:Date.now()};
+    await db.collection("dok").add(doc);$("dlgDok").close();setStatus("Dokumentasi tersimpan");
+  }catch(err){$("k_status").textContent="Gagal menyimpan: "+(err?.message||err?.code||"coba lagi")+(ids.length?` (${ids.length} foto sudah terunggah)`:"")}
+  finally{btn.disabled=false}
+});
+/* ---------- Google Maps / KML ---------- */
+const hasGps=b=>b.lat!==""&&b.lng!==""&&isFinite(parseFloat(b.lat))&&isFinite(parseFloat(b.lng));
+function renderGmap(){
+  const g=sorted().filter(hasGps);const a=$("gmAll");
+  if(!g.length){a.setAttribute("aria-disabled","true");a.removeAttribute("href");$("gmInfo").textContent="Isi koordinat blok dulu agar tombol ini aktif.";return}
+  a.removeAttribute("aria-disabled");
+  a.href=g.length===1?`https://www.google.com/maps?q=${encodeURIComponent(g[0].lat+","+g[0].lng)}`:"https://www.google.com/maps/dir/"+g.slice(0,10).map(b=>encodeURIComponent((+b.lat)+","+(+b.lng))).join("/");
+  $("gmInfo").textContent=`${g.length} dari ${blocks.length} blok punya koordinat.`+(g.length>1?" Google Maps menampilkannya sebagai titik A, B, C… berurutan B01 dst.":"");
+}
+$("btnKml").onclick=async()=>{
+  const g=sorted().filter(hasGps);
+  if(!g.length){setStatus("Belum ada blok dengan koordinat",true);return}
+  let dl=null;try{dl=await window.claude?.use?.("downloads")}catch(e){}
+  if(!dl){setStatus("Unduhan tidak tersedia di tampilan ini",true);return}
+  const x=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
+  const kml=`<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>${x(info.kelompok||"Penangkaran benih padi")}</name>
+<Style id="inpari"><IconStyle><color>ff3a7d2f</color><scale>1.2</scale></IconStyle></Style>
+<Style id="cakra"><IconStyle><color>ff1f79b7</color><scale>1.2</scale></IconStyle></Style>
+${g.map(b=>`<Placemark><name>${x(b.id+" "+b.nama)}</name><styleUrl>#${b.varietas==="Cakrabuana"?"cakra":"inpari"}</styleUrl><description>${x(`${b.varietas} · ${(+b.luas||0).toFixed(2)} Ha · ${b.lokasi||""}`)}</description><Point><coordinates>${+b.lng},${+b.lat},0</coordinates></Point></Placemark>`).join("\n")}
+</Document></kml>`;
+  try{await dl.save({filename:"lokasi-blok-penangkaran.kml",data:new Blob([kml],{type:"application/vnd.google-earth.kml+xml"})});setStatus("File KML diunduh")}
+  catch(e){setStatus(e?.code==="declined"?"Unduhan dibatalkan":"Unduhan KML gagal: "+(e?.message||e?.code),true)}
+};
+/* ---------- tabel isi koordinat ---------- */
+function parseKoor(s){
+  s=String(s||"").trim();if(!s)return {lat:"",lng:""};
+  const m=s.replace(/°/g," ").match(/(-?\d+(?:[.,]\d+)?)\s*([NSns])?\s*[,;\s]\s*(-?\d+(?:[.,]\d+)?)\s*([EWew])?/);
+  if(!m)return null;
+  let lat=parseFloat(m[1].replace(",",".")),lng=parseFloat(m[3].replace(",","."));
+  if(m[2]&&/s/i.test(m[2]))lat=-Math.abs(lat);if(m[4]&&/w/i.test(m[4]))lng=-Math.abs(lng);
+  if(!(Math.abs(lat)<=90&&Math.abs(lng)<=180))return null;
+  return {lat:String(+lat.toFixed(6)),lng:String(+lng.toFixed(6))};
+}
+const koorDirty=new Set();
+function renderKoor(){
+  if(document.activeElement&&$("koorBody").contains(document.activeElement))return;
+  const keep={};for(const id of koorDirty){if($("kz_"+id))keep[id]=[$("kz_"+id).value,$("kp_"+id).value,$("kl_"+id).value]}
+  $("koorBody").innerHTML=sorted().map(b=>{const has=hasGps(b);
+    return `<tr data-row="${b.id}" class="${koorDirty.has(b.id)?"dirty":""}"><td class="num"><b>${b.id}</b></td><td>${esc(b.nama)}</td>
+    <td class="kc"><input id="kz_${b.id}" data-kz="${b.id}" value="${has?esc(b.lat+", "+b.lng):""}" placeholder="-0.281782, 116.857636" inputmode="decimal" aria-label="Koordinat ${b.id}"></td>
+    <td><input class="kn" id="kp_${b.id}" data-kp="${b.id}" type="number" min="1" value="${esc(b.panjang||"")}" aria-label="Panjang ${b.id}"></td>
+    <td><input class="kn" id="kl_${b.id}" data-kl="${b.id}" type="number" min="1" value="${esc(b.lebar||"")}" aria-label="Lebar ${b.id}"></td>
+    <td id="ks_${b.id}">${has?'<span class="pill ok">Terisi</span>':'<span class="pill na">Belum</span>'}</td>
+    <td>${has?`<a class="btnlink sm" href="https://www.google.com/maps?q=${encodeURIComponent((+b.lat)+','+(+b.lng))}" target="_blank" rel="noopener">Buka peta</a>`:'<span class="muted">—</span>'}</td></tr>`}).join("");
+  for(const [id,[z,p,l]] of Object.entries(keep)){$("kz_"+id).value=z;$("kp_"+id).value=p;$("kl_"+id).value=l;$("ks_"+id).innerHTML='<span class="pill na">Belum disimpan</span>'}
+}
+$("koorBody").addEventListener("input",e=>{const id=e.target.dataset.kz||e.target.dataset.kp||e.target.dataset.kl;if(!id)return;koorDirty.add(id);e.target.closest("tr").classList.add("dirty");
+  if(e.target.dataset.kz){const p=parseKoor(e.target.value);e.target.classList.toggle("bad",p===null);$("ks_"+id).innerHTML=p===null?'<span class="pill warn">Format salah</span>':'<span class="pill na">Belum disimpan</span>'}
+  else $("ks_"+id).innerHTML='<span class="pill na">Belum disimpan</span>'});
+$("btnSaveKoor").onclick=async()=>{
+  if(!koorDirty.size){setStatus("Tidak ada perubahan koordinat");return}
+  const bad=[];const changed=[];
+  for(const id of koorDirty){const p=parseKoor($("kz_"+id).value);if(p===null){bad.push(id);continue}
+    const b=JSON.parse(JSON.stringify(blocks.find(x=>x.id===id)));b.lat=p.lat;b.lng=p.lng;
+    const pv=parseFloat($("kp_"+id).value),lv=parseFloat($("kl_"+id).value);if(pv>0)b.panjang=pv;if(lv>0)b.lebar=lv;changed.push(b)}
+  if(bad.length){setStatus("Format koordinat salah di "+bad.join(", ")+". Contoh: -0.281782, 116.857636",true);if(!changed.length)return}
+  blocks=blocks.map(x=>changed.find(c=>c.id===x.id)||x);
+  for(const b of changed)koorDirty.delete(b.id);
+  document.activeElement?.blur?.();renderAll();setStatus(`Menyimpan ${changed.length} blok…`);
+  for(const b of changed)await persistBlock(b);
+  if(!bad.length)setStatus(`Koordinat ${changed.length} blok tersimpan`);
+};
+function renderAll(){renderKoor();renderGmap();renderMeta();renderSummary();renderMap();renderTable();renderBpsb();renderProgress();renderDokList();renderCards();}
+
+/* ---------- persistence ---------- */
+async function persistBlock(b){
+  saveLocal();
+  if(!db){setStatus("Tersimpan di perangkat ini saja");return}
+  try{await db.collection("blok").doc(b.id).set(b);setStatus("Tersimpan")}catch(e){setStatus("Gagal menyimpan: "+(e?.message||e?.code||"coba lagi"),true)}
+}
+async function persistInfo(){
+  saveLocal();
+  if(!db){setStatus("Tersimpan di perangkat ini saja");return}
+  try{await db.doc("info/umum").set(info);setStatus("Tersimpan")}catch(e){setStatus("Gagal menyimpan: "+(e?.message||e?.code||"coba lagi"),true)}
+}
+
+/* ---------- block dialog ---------- */
+for(const k of ["u","s","t","b"]){$("b_"+k+"_j").innerHTML=BATAS.map(([v,t])=>`<option value="${v}">${t}</option>`).join("")}
+let editing=null;
+function openBlock(id){
+  const b=blocks.find(x=>x.id===id);if(!b)return;editing=b;
+  $("dTitle").textContent=b.nama;$("dCode").textContent=b.id;
+  $("f_nama").value=b.nama;$("f_luas").value=b.luas;$("f_var").value=b.varietas;$("f_kelas").value=b.kelas||"";$("f_lok").value=b.lokasi||"";
+  $("f_p").value=b.panjang||"";$("f_l").value=b.lebar||"";$("f_lat").value=b.lat||"";$("f_lng").value=b.lng||"";$("f_semai").value=b.semai||"";$("f_tanam").value=b.tanam||"";
+  for(const k of ["u","s","t","b"]){$("b_"+k+"_j").value=b.batas?.[k]?.j||"";$("b_"+k+"_k").value=b.batas?.[k]?.k||""}
+  $("f_bsk").value=b.bsKelas||"";$("f_bskg").value=b.bsKg??"";$("f_bslot").value=b.bsLot||"";$("f_bsprod").value=b.bsProdusen||"";$("f_bsexp").value=b.bsExp||"";$("f_panen").value=b.panen||"";
+  $("f_isoj").value=b.isoJarak??"";$("f_isow").value=b.isoWaktu??"";$("f_cat").value=b.catatan||"";
+  $("dlgBlok").showModal();
+}
+$("dCancel").onclick=()=>$("dlgBlok").close();
+$("fBlok").addEventListener("submit",e=>{
+  e.preventDefault();if(!editing)return;
+  const b=JSON.parse(JSON.stringify(editing));
+  b.nama=$("f_nama").value.trim()||b.nama;b.luas=parseFloat($("f_luas").value)||0;b.varietas=$("f_var").value;b.kelas=$("f_kelas").value;b.lokasi=$("f_lok").value.trim();
+  b.panjang=parseFloat($("f_p").value)||100;b.lebar=parseFloat($("f_l").value)||100;b.lat=$("f_lat").value.trim().replace(",",".");b.lng=$("f_lng").value.trim().replace(",",".");
+  b.semai=$("f_semai").value;b.tanam=$("f_tanam").value;
+  b.batas={};for(const k of ["u","s","t","b"])b.batas[k]={j:$("b_"+k+"_j").value,k:$("b_"+k+"_k").value.trim()};
+  b.bsKelas=$("f_bsk").value;b.bsKg=$("f_bskg").value;b.bsLot=$("f_bslot").value.trim();b.bsProdusen=$("f_bsprod").value.trim();b.bsExp=$("f_bsexp").value;b.panen=$("f_panen").value;
+  b.isoJarak=$("f_isoj").value;b.isoWaktu=$("f_isow").value;b.catatan=$("f_cat").value.trim();
+  blocks=blocks.map(x=>x.id===b.id?b:x);renderAll();$("dlgBlok").close();setStatus("Menyimpan…");persistBlock(b);
+});
+document.addEventListener("click",e=>{const t=e.target.closest("[data-edit]");if(t)openBlock(t.dataset.edit)});
+
+/* ---------- info dialog ---------- */
+$("btnInfo").onclick=()=>{$("i_kel").value=info.kelompok||"";$("i_desa").value=info.desa||"";$("i_kec").value=info.kecamatan||"";$("i_kab").value=info.kabupaten||"";$("i_mt").value=info.musim||"";$("i_reg").value=info.reg||"";$("dlgInfo").showModal()};
+$("iCancel").onclick=()=>$("dlgInfo").close();
+$("fInfo").addEventListener("submit",e=>{e.preventDefault();info={kelompok:$("i_kel").value.trim(),desa:$("i_desa").value.trim(),kecamatan:$("i_kec").value.trim(),kabupaten:$("i_kab").value.trim(),musim:$("i_mt").value.trim(),reg:$("i_reg").value.trim()};renderMeta();$("dlgInfo").close();setStatus("Menyimpan…");persistInfo()});
+
+/* ---------- drag on map ---------- */
+const svg=$("map");let drag=null;
+function pt(ev){const r=svg.getBoundingClientRect();return{x:(ev.clientX-r.left)/r.width*1000,y:(ev.clientY-r.top)/r.height*620}}
+svg.addEventListener("pointerdown",ev=>{const g=ev.target.closest(".blk");if(!g)return;const b=blocks.find(x=>x.id===g.dataset.id);const tm=/translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute("transform")||"");if(tm){b.x=Math.round(+tm[1]+65);b.y=Math.round(+tm[2]+45)}const p=pt(ev);drag={b,g,dx:p.x-b.x,dy:p.y-b.y,moved:false,sx:p.x,sy:p.y};svg.setPointerCapture(ev.pointerId)});
+svg.addEventListener("pointermove",ev=>{if(!drag)return;const p=pt(ev);if(Math.hypot(p.x-drag.sx,p.y-drag.sy)>4)drag.moved=true;if(!drag.moved)return;
+  drag.b.x=Math.round(Math.max(70,Math.min(930,p.x-drag.dx)));drag.b.y=Math.round(Math.max(50,Math.min(570,p.y-drag.dy)));drag.g.setAttribute("transform",`translate(${drag.b.x-65},${drag.b.y-45})`)});
+svg.addEventListener("pointerup",()=>{if(!drag)return;const d=drag;drag=null;if(d.moved){renderMap();persistBlock(d.b)}else openBlock(d.b.id)});
+svg.addEventListener("pointercancel",()=>{drag=null;renderMap()});
+
+/* ---------- GPS layout ---------- */
+$("btnGps").onclick=async()=>{
+  const g=blocks.filter(b=>isFinite(parseFloat(b.lat))&&isFinite(parseFloat(b.lng))&&b.lat!==""&&b.lng!=="");
+  if(g.length<2){setStatus("Isi koordinat GPS minimal 2 blok dulu",true);return}
+  const la=g.map(b=>+b.lat),ln=g.map(b=>+b.lng);
+  const minLa=Math.min(...la),maxLa=Math.max(...la),minLn=Math.min(...ln),maxLn=Math.max(...ln);
+  const cos=Math.cos((minLa+maxLa)/2*Math.PI/180);
+  const spanX=Math.max((maxLn-minLn)*cos,1e-6),spanY=Math.max(maxLa-minLa,1e-6);
+  const s=Math.min(820/spanX,480/spanY);
+  const ox=(1000-spanX*s)/2,oy=(620-spanY*s)/2;
+  const changed=[];
+  for(const b of g){b.x=Math.round(Math.max(70,Math.min(930,ox+((+b.lng)-minLn)*cos*s)));b.y=Math.round(Math.max(50,Math.min(570,oy+(maxLa-(+b.lat))*s)));changed.push(b)}
+  renderMap();setStatus("Menyimpan posisi…");
+  for(const b of changed){await persistBlock(b)}
+  setStatus(`Posisi ${changed.length} blok diatur dari GPS`);
+};
+
+/* ---------- print download ---------- */
+async function setupDownload(){
+  let dl=null;try{dl=await window.claude?.use?.("downloads")}catch(e){}
+  if(!dl)return;const btn=$("btnDl");btn.hidden=false;
+  btn.onclick=async()=>{
+    const css=$("mainstyle").textContent;
+    const body=$("app").cloneNode(true);body.querySelectorAll(".toolbar,.no-print").forEach(n=>n.remove());
+    const imgs=[...body.querySelectorAll("img[src^='/_blob/']")];
+    if(imgs.length)setStatus(`Menyiapkan ${imgs.length} foto…`);
+    for(const im of imgs){try{const r=await fetch(im.getAttribute("src"));const bl=await r.blob();im.src=await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(bl)});im.removeAttribute("loading")}catch(e){}}
+    const html=`<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Denah Lahan Kegiatan Mandiri Benih Tanaman Pangan TA 2026</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Archivo:wght@600;800&display=swap"><style>${css}</style><style>:root{color-scheme:light}body{margin:0}</style></head><body data-theme="light"><p style="font:12px sans-serif;padding:8px 16px;background:#eef3ee" class="no-print">Buka file ini di browser, lalu tekan Ctrl+P (atau menu Cetak) untuk mencetak / simpan PDF.</p>${body.outerHTML}</body></html>`
+      .replace('<html lang="id">','<html lang="id" data-theme="light">');
+    try{await dl.save({filename:"denah-lahan-mandiri-benih-2026.html",data:html});setStatus("File versi cetak diunduh")}catch(e){setStatus(e?.code==="declined"?"Unduhan dibatalkan":"Unduhan gagal: "+(e?.message||e?.code),true)}
+  };
+}
+
+/* ---------- boot ---------- */
+const SNAP=window.__SNAPSHOT__||null;
+if(SNAP){
+  blocks=SNAP.blocks||blocks;info=SNAP.info||info;labels={...labels,...(SNAP.labels||{})};berkas=SNAP.berkas||{};doks=SNAP.doks||[];
+  document.documentElement.classList.add("static");renderAll();setStatus("Salinan data per "+(SNAP.tanggal||"-"));
+  $("btnKml").onclick=()=>{const g=sorted().filter(hasGps);if(!g.length)return;
+    const x=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
+    const kml=`<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>${x(info.kelompok||"Penangkaran benih padi")}</name>\n${g.map(b=>`<Placemark><name>${x(b.id+" "+b.nama)}</name><description>${x(b.varietas+" · "+(+b.luas||0).toFixed(2)+" Ha")}</description><Point><coordinates>${+b.lng},${+b.lat},0</coordinates></Point></Placemark>`).join("\n")}\n</Document></kml>`;
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([kml],{type:"application/vnd.google-earth.kml+xml"}));a.download="lokasi-blok-penangkaran.kml";document.body.appendChild(a);a.click();a.remove()};
+}else{
+loadLocal();renderAll();
+(async()=>{
+  setupDownload();
+  try{db=await window.claude?.use?.("db")}catch(e){db=null}
+  if(!db){setStatus("Mode lokal: data hanya tersimpan di perangkat ini");return}
+  const timer=setTimeout(()=>{if(!live)setStatus("Data belum bisa dimuat. Periksa koneksi.",true)},10000);
+  db.collection("blok").onSnapshot(snap=>{
+    if(!snap.empty){blocks=snap.docs.map(d=>({...JSON.parse(JSON.stringify(d.data())),id:d.id}));
+      const ids=new Set(blocks.map(b=>b.id));for(const d of defaults())if(!ids.has(d.id)&&blocks.length<10)blocks.push(d);}
+    if(!snap.metadata.fromCache){live=true;clearTimeout(timer);setStatus("Data tersimpan bersama")}
+    if(!drag)renderAll();saveLocal();
+  },err=>{clearTimeout(timer);setStatus("Tidak bisa memuat data bersama: "+(err?.message||err?.code),true)});
+  db.doc("info/umum").onSnapshot(s=>{if(s.exists){info={...s.data()};renderMeta();saveLocal()}},()=>{});
+  db.collection("dok").onSnapshot(s=>{doks=s.docs.map(d=>({...d.data(),_id:d.id}));renderProgress();renderDokList()},err=>setStatus("Tidak bisa memuat dokumentasi: "+(err?.message||err?.code),true));
+  db.collection("label").onSnapshot(s=>{const n={...labels};for(const d of s.docs)n[d.id]={...d.data()};labels=n;renderLabels();saveLocal()},()=>{});
+  db.doc("info/berkas").onSnapshot(s=>{if(s.exists){berkas={...s.data()};renderBpsb();saveLocal()}},()=>{});
+})();
+}
+})();
+</script>
+
+</body></html>
