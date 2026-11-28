@@ -268,7 +268,7 @@ table.prog th{text-transform:none;letter-spacing:0;font-family:var(--f-body);lin
       <h2>Dokumentasi kegiatan</h2>
       <button type="button" class="primary no-print" id="btnDok">Tambah dokumentasi</button>
     </div>
-    <div class="note no-print">8 tahap. Kegiatan serentak (persiapan, semai, tanam, pemeliharaan, panen) cukup dicatat sekali dengan pilihan “Semua blok”. Tahap bertanda biru (roguing dan pemeriksaan BPSB) dicatat per blok. Cukup 2–3 foto Timemark per catatan.</div>
+    <div class="note no-print">8 tahap. Kegiatan serentak (sosialisasi, semai, tanam, pemeliharaan, panen) cukup dicatat sekali dengan pilihan “Semua blok”. Tahap bertanda biru (roguing dan pemeriksaan BPSB) dicatat per blok. Cukup 2–3 foto Timemark per catatan.</div>
     <div class="tablewrap"><table class="prog">
       <thead id="progHead"></thead><tbody id="progBody"></tbody>
     </table></div>
@@ -635,7 +635,7 @@ document.addEventListener("change",async e=>{const k=e.target?.dataset?.ck;if(!k
   try{await db.doc("info/berkas").set(berkas);setStatus("Tersimpan")}catch(err){setStatus("Gagal menyimpan: "+(err?.message||err?.code),true)}});
 /* ---------- dokumentasi ---------- */
 const TAHAP=[
- ["persiapan","Persiapan lahan & pemeriksaan pendahuluan",1,"Persiapan + periksa awal"],
+ ["sosialisasi","Sosialisasi / pertemuan kelompok",0,"Sosialisasi"],
  ["semai","Semai",0,"Semai"],
  ["tanam","Tanam",0,"Tanam"],
  ["pelihara","Pemeliharaan (pupuk, siang, OPT)",0,"Pemeliharaan"],
