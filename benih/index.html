@@ -171,6 +171,7 @@ table.prog th{text-transform:none;letter-spacing:0;font-family:var(--f-body);lin
     <div class="gmap no-print">
       <a id="gmAll" class="btnlink" target="_blank" rel="noopener" aria-disabled="true">Buka semua titik di Google Maps</a>
       <button type="button" id="btnKml">Unduh file KML (Google Earth / My Maps)</button>
+      <button type="button" id="btnCsv">Unduh file CSV (My Maps)</button>
       <span class="muted" id="gmInfo" style="font-size:.82rem"></span>
     </div>
     <div class="mapbox"><svg id="map" viewBox="0 0 1000 620" role="img" aria-label="Skema letak 10 blok sawah"></svg>
@@ -614,11 +615,8 @@ function renderGmap(){
   a.href=g.length===1?`https://www.google.com/maps?q=${encodeURIComponent(g[0].lat+","+g[0].lng)}`:"https://www.google.com/maps/dir/"+g.slice(0,10).map(b=>encodeURIComponent((+b.lat)+","+(+b.lng))).join("/");
   $("gmInfo").textContent=`${g.length} dari ${blocks.length} blok punya koordinat.`+(g.length>1?" Google Maps menampilkannya sebagai titik A, B, C… berurutan B01 dst.":"");
 }
-$("btnKml").onclick=async()=>{
+function geoFiles(){
   const g=sorted().filter(hasGps);
-  if(!g.length){setStatus("Belum ada blok dengan koordinat",true);return}
-  let dl=null;try{dl=await window.claude?.use?.("downloads")}catch(e){}
-  if(!dl){setStatus("Unduhan tidak tersedia di tampilan ini",true);return}
   const x=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
   const kml=`<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>${x(info.kelompok||"Penangkaran benih padi")}</name>
@@ -626,9 +624,25 @@ $("btnKml").onclick=async()=>{
 <Style id="cakra"><IconStyle><color>ff1f79b7</color><scale>1.2</scale></IconStyle></Style>
 ${g.map(b=>`<Placemark><name>${x(b.id+" "+b.nama)}</name><styleUrl>#${b.varietas==="Cakrabuana"?"cakra":"inpari"}</styleUrl><description>${x(`${b.varietas} · ${(+b.luas||0).toFixed(2)} Ha · ${b.lokasi||""}`)}</description><Point><coordinates>${+b.lng},${+b.lat},0</coordinates></Point></Placemark>`).join("\n")}
 </Document></kml>`;
-  try{await dl.save({filename:"lokasi-blok-penangkaran.kml",data:new Blob([kml],{type:"application/vnd.google-earth.kml+xml"})});setStatus("File KML diunduh")}
-  catch(e){setStatus(e?.code==="declined"?"Unduhan dibatalkan":"Unduhan KML gagal: "+(e?.message||e?.code),true)}
-};
+  const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+  const csv="Blok,Nama,Varietas,Luas (Ha),Latitude,Longitude\n"+g.map(b=>[b.id,b.nama,b.varietas,(+b.luas||0).toFixed(2),+b.lat,+b.lng].map(q).join(",")).join("\n")+"\n";
+  return {n:g.length,kml,csv};
+}
+function gmMsg(t,err){const el=$("gmInfo");el.textContent=t;el.style.color=err?"var(--warn)":"";setStatus(t,err)}
+async function saveGeo(kind){
+  const f=geoFiles();if(!f.n){gmMsg("Belum ada blok dengan koordinat",true);return}
+  let dl=null;try{dl=await window.claude?.use?.("downloads")}catch(e){}
+  if(!dl){gmMsg("Unduhan tidak tersedia di tampilan ini. Buka halaman versi GitHub untuk mengunduh file peta.",true);return}
+  const tryKind=async k=>dl.save(k==="kml"?{filename:"lokasi-blok-penangkaran.kml",data:new Blob([f.kml],{type:"application/vnd.google-earth.kml+xml"})}:{filename:"lokasi-blok-penangkaran.csv",data:new Blob([f.csv],{type:"text/csv"})});
+  gmMsg("Menyiapkan file…");
+  try{await tryKind(kind);gmMsg(kind==="kml"?"File KML diunduh. Buka di Google Earth, atau impor di My Maps.":"File CSV diunduh. Impor di My Maps, pilih kolom Latitude dan Longitude sebagai posisi.")}
+  catch(e){
+    if(e?.code==="declined"){gmMsg("Unduhan dibatalkan.",true);return}
+    if(kind==="kml"){try{await tryKind("csv");gmMsg("File KML tidak bisa diunduh di sini, jadi diganti file CSV. My Maps bisa mengimpornya (posisi: kolom Latitude dan Longitude).");return}catch(e2){e=e2}}
+    gmMsg("Unduhan gagal ("+(e?.code||e?.message||"tidak diketahui")+"). Buka halaman versi GitHub untuk mengunduh file peta.",true)}
+}
+$("btnKml").onclick=()=>saveGeo("kml");
+$("btnCsv").onclick=()=>saveGeo("csv");
 /* ---------- tabel isi koordinat ---------- */
 function parseKoor(s){
   s=String(s||"").trim();if(!s)return {lat:"",lng:""};
@@ -761,10 +775,9 @@ const SNAP=window.__SNAPSHOT__||null;
 if(SNAP){
   blocks=SNAP.blocks||blocks;info=SNAP.info||info;labels={...labels,...(SNAP.labels||{})};berkas=SNAP.berkas||{};doks=SNAP.doks||[];
   document.documentElement.classList.add("static");renderAll();setStatus("Salinan data per "+(SNAP.tanggal||"-"));
-  $("btnKml").onclick=()=>{const g=sorted().filter(hasGps);if(!g.length)return;
-    const x=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
-    const kml=`<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>${x(info.kelompok||"Penangkaran benih padi")}</name>\n${g.map(b=>`<Placemark><name>${x(b.id+" "+b.nama)}</name><description>${x(b.varietas+" · "+(+b.luas||0).toFixed(2)+" Ha")}</description><Point><coordinates>${+b.lng},${+b.lat},0</coordinates></Point></Placemark>`).join("\n")}\n</Document></kml>`;
-    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([kml],{type:"application/vnd.google-earth.kml+xml"}));a.download="lokasi-blok-penangkaran.kml";document.body.appendChild(a);a.click();a.remove()};
+  const fileLink=(name)=>{const a=document.createElement("a");a.href=name;a.download=name;document.body.appendChild(a);a.click();a.remove()};
+  $("btnKml").onclick=()=>{fileLink("lokasi-blok-penangkaran.kml");gmMsg("File KML diunduh. Buka di Google Earth, atau impor di My Maps.")};
+  $("btnCsv").onclick=()=>{fileLink("lokasi-blok-penangkaran.csv");gmMsg("File CSV diunduh. Impor di My Maps, pilih kolom Latitude dan Longitude sebagai posisi.")};
 }else{
 loadLocal();renderAll();
 (async()=>{

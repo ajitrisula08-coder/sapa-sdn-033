@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Kelompok Tani Suka Maju</name>
+<Style id="inpari"><IconStyle><color>ff3a7d2f</color><scale>1.2</scale></IconStyle></Style>
+<Style id="cakra"><IconStyle><color>ff1f79b7</color><scale>1.2</scale></IconStyle></Style>
+<Placemark><name>B01 Aji Prasetia</name><styleUrl>#inpari</styleUrl><description>Inpari 49 · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.857636,-0.281782,0</coordinates></Point></Placemark>
+<Placemark><name>B02 Jaka Trisula</name><styleUrl>#inpari</styleUrl><description>Inpari 49 · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.860812,-0.277211,0</coordinates></Point></Placemark>
+<Placemark><name>B03 Sugianto</name><styleUrl>#inpari</styleUrl><description>Inpari 49 · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.859711,-0.281332,0</coordinates></Point></Placemark>
+<Placemark><name>B04 Hartoyo</name><styleUrl>#inpari</styleUrl><description>Inpari 49 · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.859633,-0.280695,0</coordinates></Point></Placemark>
+<Placemark><name>B05 Kartono</name><styleUrl>#inpari</styleUrl><description>Inpari 49 · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.86238,-0.281368,0</coordinates></Point></Placemark>
+<Placemark><name>B06 Wahid</name><styleUrl>#inpari</styleUrl><description>Inpari 49 · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.858681,-0.282264,0</coordinates></Point></Placemark>
+<Placemark><name>B07 Roni</name><styleUrl>#inpari</styleUrl><description>Inpari 49 · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.861069,-0.278939,0</coordinates></Point></Placemark>
+<Placemark><name>B08 Rohmadul Aziz</name><styleUrl>#inpari</styleUrl><description>Inpari 49 · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.861225,-0.27822,0</coordinates></Point></Placemark>
+<Placemark><name>B09 Danang</name><styleUrl>#cakra</styleUrl><description>Cakrabuana · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.861127,-0.273754,0</coordinates></Point></Placemark>
+<Placemark><name>B10 I Ketut Sudiana</name><styleUrl>#cakra</styleUrl><description>Cakrabuana · 1.00 Ha · Dsn. Liang Berakat</description><Point><coordinates>116.86381,-0.279405,0</coordinates></Point></Placemark>
+</Document></kml>
